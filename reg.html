@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Наставник — Регистрация</title>
+<style>
+  :root {
+    --accent: #7c6cf0;
+    --accent2: #22d3ee;
+    --muted: #9fb3c8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #d7f5ff;
+    background:
+      radial-gradient(1200px 800px at 20% 10%, #0b1030 0%, #050916 55%, #02040e 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+  }
+  /* звёздное поле поверх фона */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(1px 1px at 12% 22%, rgba(160,220,255,.8), transparent 60%),
+      radial-gradient(1px 1px at 27% 9%, rgba(200,240,255,.7), transparent 60%),
+      radial-gradient(2px 2px at 41% 28%, rgba(120,200,255,.5), transparent 60%),
+      radial-gradient(1px 1px at 55% 12%, rgba(180,230,255,.6), transparent 60%),
+      radial-gradient(2px 2px at 70% 25%, rgba(140,210,255,.45), transparent 60%),
+      radial-gradient(1px 1px at 83% 15%, rgba(200,240,255,.6), transparent 60%),
+      radial-gradient(2px 2px at 91% 33%, rgba(110,190,255,.5), transparent 60%),
+      radial-gradient(1px 1px at 63% 4%, rgba(220,250,255,.5), transparent 60%);
+    opacity: .5;
+    pointer-events: none;
+    animation: starTw 6s ease-in-out infinite alternate;
+  }
+  .orb {
+    position: fixed; border-radius: 50%; filter: blur(70px); opacity: .22;
+    pointer-events: none; z-index: 0;
+  }
+  .orb-a { width: 340px; height: 340px; left: -80px; top: -60px; background: radial-gradient(circle, #7c6cf0, transparent 70%); animation: orb floatA 14s ease-in-out infinite; }
+  .orb-b { width: 420px; height: 420px; right: -120px; bottom: -100px; background: radial-gradient(circle, #22d3ee, transparent 70%); animation: orb floatB 18s ease-in-out infinite; }
+
+  @keyframes starTw { from { opacity: .35; } to { opacity: .65; } }
+  @keyframes orbA { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-28px) scale(1.08); } }
+  @keyframes orbB { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-24px, 20px) scale(1.1); } }
+
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 24px;
+    text-align: center;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(124, 108, 240, 0.16), transparent 55%),
+      radial-gradient(circle at 82% 12%, rgba(34, 211, 238, 0.12), transparent 45%),
+      linear-gradient(160deg, rgba(11,15,21,.96) 0%, rgba(13,17,23,.96) 55%, rgba(10,14,19,.96) 100%);
+    animation: splashIn 0.55s ease-out both;
+    transition: opacity 0.45s ease;
+  }
+  .splash.scene {
+    flex-direction: row;
+    justify-content: center;
+    gap: 70px;
+  }
+  .splash.scene #top { position: absolute; opacity: 0; transform: scale(0.7); pointer-events: none; transition: opacity 0.4s ease, transform 0.4s ease; }
+  .splash.scene #btnStart { display: none; }
+  .splash.scene .splash-cube { transform: translateX(40px); }
+  #top { transition: none; }
+
+  .splash-title {
+    font-size: clamp(34px, 7vw, 60px);
+    font-weight: 800;
+    letter-spacing: 3px;
+    line-height: 1.1;
+    background: linear-gradient(120deg, var(--accent), var(--accent2) 55%, #6df3ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  .splash-sub {
+    display: inline-block; margin-top: 10px;
+    color: #bfe9ff; font-size: 12px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase;
+    border: 1px solid rgba(34,211,238,.4); border-radius: 999px;
+    padding: 6px 14px; background: rgba(34,211,238,.08);
+    box-shadow: 0 0 18px rgba(34,211,238,.15);
+  }
+
+  /* ===== НАСТОЯЩИЙ 3D-КУБ =====
+     filter на preserve-3d обнуляет 3D-контекст -> куб = квадрат.
+     Свечение (pulseGlow) — только на ОБЁРТКЕ .splash-cube. */
+  .splash-cube {
+    width: 230px;
+    height: 230px;
+    margin: 6px 0;
+    perspective: 800px;
+    perspective-origin: 50% 50%;
+    transition: transform 0.5s ease;
+    animation: pulseGlow 3.2s ease-in-out infinite;
+  }
+  .cube-3d {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 35px auto;
+    transform-style: preserve-3d;
+    animation: cubeRot 16s linear infinite;
+  }
+  .cube-3d .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    border: 2px solid rgba(124, 108, 240, 0.75);
+    background: linear-gradient(135deg, rgba(124, 108, 240, 0.22), rgba(34, 211, 238, 0.10));
+    box-shadow: inset 0 0 18px rgba(124, 108, 240, 0.28), 0 0 16px rgba(124, 108, 240, 0.45);
+    backface-visibility: hidden;
+  }
+  .cube-3d .f2 { background: linear-gradient(135deg, rgba(80, 0, 255, 0.30), rgba(40, 120, 255, 0.16)); }
+  .cube-3d .f3 { background: linear-gradient(135deg, rgba(0, 120, 255, 0.28), rgba(20, 211, 238, 0.14)); }
+  .cube-3d .f4 { background: linear-gradient(135deg, rgba(180, 60, 255, 0.26), rgba(80, 140, 255, 0.16)); }
+  .cube-3d .f5 { background: linear-gradient(135deg, rgba(120, 60, 255, 0.30), rgba(20, 200, 255, 0.12)); }
+  .cube-3d .f6 { background: linear-gradient(135deg, rgba(60, 60, 255, 0.30), rgba(160, 80, 255, 0.16)); }
+  .cube-3d .f1 { transform: translateZ(80px); display: flex; align-items: center; justify-content: center; }
+  .cube-3d .f2 { transform: rotateY(180deg) translateZ(80px); }
+  .cube-3d .f3 { transform: rotateY(-90deg) translateZ(80px); }
+  .cube-3d .f4 { transform: rotateY(90deg) translateZ(80px); }
+  .cube-3d .f5 { transform: rotateX(90deg) translateZ(80px); }
+  .cube-3d .f6 { transform: rotateX(-90deg) translateZ(80px); }
+  .eyes { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .eye {
+    width: 26px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(5, 10, 18, 0.92);
+    border: 2px solid rgba(34, 211, 238, 0.9);
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.8), inset 0 0 8px rgba(34, 211, 238, 0.5);
+    transform-origin: center 55%;
+    animation: blink 4.5s ease-in-out infinite;
+  }
+  .eye:nth-child(2) { animation-delay: 0.15s; }
+  .pupil {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #6df3ff;
+    box-shadow: 0 0 12px 3px rgba(34, 211, 238, 1), 0 0 2px 1px #ffffff;
+  }
+
+  .splash-btn {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 4px;
+    padding: 14px 34px; border: none; border-radius: 14px;
+    font-size: 16px; font-weight: 700; letter-spacing: 0.4px; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 0 22px rgba(124, 108, 240, 0.55), 0 8px 26px rgba(34, 211, 238, 0.3);
+    cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease;
+    overflow: hidden; position: relative;
+  }
+  .splash-btn::after {
+    content: ""; position: absolute; top: 0; left: -70%; width: 50%; height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255,255,255,.45), transparent);
+    transform: skewX(-20deg); animation: shine 3.4s ease-in-out infinite;
+  }
+  @keyframes shine { 0%,60% { left: -70%; } 100% { left: 130%; } }
+  .splash-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 0 34px rgba(124, 108, 240, 0.8), 0 0 60px rgba(34, 211, 238, 0.45);
+  }
+
+  @keyframes splashIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+  @keyframes cubeRot { 0% { transform: rotateX(-15deg) rotateY(0deg); } 100% { transform: rotateX(-15deg) rotateY(360deg); } }
+  @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.06); } 97% { transform: scaleY(1); } }
+  @keyframes pulseGlow {
+    0%, 100% { filter: drop-shadow(0 0 16px rgba(124, 108, 240, 0.45)); }
+    50%      { filter: drop-shadow(0 0 32px rgba(34, 211, 238, 0.65)); }
+  }
+  @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes barFill { from { width: 0%; } to { width: var(--w, 100%); } }
+
+  .card {
+    width: 360px; max-width: 88vw;
+    background: linear-gradient(160deg, rgba(15,22,56,.92), rgba(7,12,34,.92));
+    border: 1px solid rgba(80,230,255,.4);
+    border-radius: 18px;
+    box-shadow: 0 0 40px rgba(80,230,255,.18), inset 0 0 20px rgba(80,230,255,.06);
+    padding: 26px 22px;
+    text-align: center;
+    opacity: 0; transform: translateX(-46px); pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    max-height: min(94vh, 660px);
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(80,230,255,.4) transparent;
+  }
+  .card::-webkit-scrollbar { width: 6px; }
+  .card::-webkit-scrollbar-thumb { background: rgba(80,230,255,.4); border-radius: 4px; }
+  .splash.scene .card { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  .title { font-size: 22px; font-weight: 800; letter-spacing: .4px; }
+  .title::before { content: attr(data-ico); margin-right: 6px; }
+  .sub { font-size: 13px; color: #8fd7ef; margin: 6px 0 18px; }
+  .field { margin-bottom: 10px; text-align: left; }
+  .field .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  input[type=text], input[type=password] {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 1px solid #2a5a7a; background: rgba(4,10,28,.7); color: #fff;
+    font-size: 14px; text-align: center; outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  input:focus { border-color: #50e6ff; box-shadow: 0 0 8px rgba(80,230,255,.4); }
+  .btn {
+    width: 100%; margin-top: 10px; padding: 12px; border: 0; border-radius: 12px;
+    background: linear-gradient(90deg, #19d3ff, #7b5bff); color: #02101b;
+    font-weight: 800; font-size: 14px; cursor: pointer;
+    transition: transform .12s, filter .15s;
+  }
+  .btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: .5; cursor: default; transform: none; }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+  .btn.ghost {
+    background: transparent; color: #9fc7dd; border: 1px solid #2b4a63;
+  }
+  .err { min-height: 18px; color: #ff6b8a; font-size: 12px; margin-top: 8px; }
+  .link { margin-top: 12px; font-size: 12px; color: #7fa8c2; background: none; border: none; cursor: pointer; text-decoration: underline; }
+  .done { text-align: center; padding: 10px 0 4px; }
+  .smile { font-size: 110px; line-height: 1; animation: pop .5s ease; }
+  .done-name { font-size: 18px; font-weight: 700; margin-top: 14px; }
+  .done-sub { font-size: 13px; color: #8fd7ef; margin-top: 6px; }
+
+  /* ===== ОПРОС ===== */
+  .stepdots { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 2px 0 10px; }
+  .stepdots i {
+    width: 7px; height: 7px; border-radius: 50%; background: rgba(160,195,220,.25);
+    transition: all .25s ease; display: block;
+  }
+  .stepdots i.on { width: 22px; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); box-shadow: 0 0 8px rgba(34,211,238,.5); }
+  .qstep { text-align: left; animation: fadeIn .3s ease; }
+  .qstep h3 { font-size: 15px; color: #7ee0ff; margin: 2px 0 4px; }
+  .qstep .hint { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .qstep label.q { display: block; font-size: 13px; color: #bcd9ea; margin: 12px 0 4px; }
+  .qstep label.q b { color: #e8f7ff; }
+  .chiprow { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; }
+  .cchip {
+    background: #141a24; color: #b8c4d4; border: 1px solid #2b3445;
+    border-radius: 999px; padding: 8px 13px; font-size: 12px; cursor: pointer;
+    transition: transform .12s, box-shadow .2s, background .2s, border-color .2s;
+  }
+  .cchip:hover { transform: translateY(-1px); border-color: rgba(39,192,239,.5); }
+  .cchip.sel {
+    background: linear-gradient(135deg, rgba(25,80,120,.35), rgba(40,60,140,.35));
+    color: #7ee0ff; border-color: rgba(39,192,239,.6);
+    box-shadow: 0 0 10px rgba(39,192,239,.4);
+  }
+  .prog { height: 6px; border-radius: 4px; background: rgba(255,255,255,.08); margin: 6px 0 14px; overflow: hidden; }
+  .prog i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); animation: barFill .4s ease both; }
+  .inv { background: transparent; color: #9fb0c5; border: 1px solid #2b3445; }
+  .done-small { font-size: 12px; color: #5dffb0; margin-top: 6px; min-height: 16px; }
+  .bub {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.35);
+    border-radius: 14px; padding: 7px 12px; margin-bottom: 10px;
+    font-size: 12px; color: #bfe9ff; animation: fadeIn .3s ease;
+  }
+  .bub b { color: #6df3ff; }
+  .taskblk {
+    background: linear-gradient(160deg, rgba(16,21,32,.9), rgba(12,16,26,.9));
+    border: 1px solid #243046; border-radius: 10px; padding: 10px; margin: 0 0 10px;
+    text-align: left; animation: fadeIn .3s ease;
+  }
+  .taskblk .th { font-size: 13px; color: #7ee0ff; font-weight: 600; margin-bottom: 4px; }
+  .taskblk pre {
+    font: 12px/1.5 Consolas, monospace; color: #9fd6ff;
+    white-space: pre-wrap; margin: 0 0 4px; padding: 6px;
+    background: rgba(2,8,20,.55); border-radius: 6px; border: 1px solid #1b2c44;
+  }
+  .taskblk .thn { font-size: 12px; color: #8fd7ef; margin-bottom: 6px; }
+
+  @media (max-width: 640px) {
+    .splash.scene { flex-direction: column; gap: 16px; justify-content: center; }
+    .splash.scene .splash-cube { transform: translateX(0) translateY(-20px) scale(.85); }
+    .card { transform: translateY(26px); }
+    .splash.scene .card { transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+
+  <div class="splash" id="splash">
+
+    <div id="top">
+      <h1 class="splash-title">AI НАСТАВНИК</h1>
+      <p class="splash-sub">офлайн-тренер по программированию</p>
+    </div>
+
+    <div class="splash-cube" id="cubeWrap">
+      <div class="cube-3d" id="cube3d"></div>
+    </div>
+
+    <button class="splash-btn" id="btnStart" type="button">Начать</button>
+
+    <div class="card" id="card">
+      <div id="box"></div>
+    </div>
+
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var mode = "login"; /* login | register */
+  var KEY = "reg.users";
+  var SESSION = "reg.current";
+  var PROFILE = "reg.profile";
+  var LD = function () {
+    return {
+      get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+      getRaw: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+      setRaw: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+      del: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
+    };
+  }();
+  var tut = {
+    get: function (k, d) { return LD.get("tutor." + k, d); },
+    set: function (k, v) { LD.set("tutor." + k, v); },
+    setRaw: function (k, v) { LD.setRaw("tutor." + k, v); }
+  };
+
+  var CATALOG = [
+    { id: "python", name: "Python", icon: "🐍", desc: "самый добрый вход" },
+    { id: "javascript", name: "JavaScript", icon: "🌐", desc: "веб и интерактив" },
+    { id: "typescript", name: "TypeScript", icon: "🔷", desc: "JS с типами" },
+    { id: "cpp", name: "C++", icon: "⚙️", desc: "мощь и скорость" },
+    { id: "java", name: "Java", icon: "☕", desc: "корпорации и Android" },
+    { id: "go", name: "Go", icon: "🐹", desc: "просто и быстро" },
+    { id: "rust", name: "Rust", desc: "безопасная память", icon: "🦀" },
+    { id: "php", name: "PHP", icon: "🐘", desc: "бэкенд сайтов" },
+    { id: "html", name: "HTML", icon: "🧱", desc: "структура страниц" },
+    { id: "sql", name: "SQL", icon: "🗄️", desc: "работа с данными" }
+  ];
+
+  /* Уровни опроса: новичок — 0 дополнительных вопросов, иначе персональный опрос ИИ */
+  var LEVELS = [
+    { v: "novice", t: "🌱 Начинаю с нуля", i: 0, d: "ИИ подберёт самые первые шаги" },
+    { v: "some", t: "🧭 Немного знаю", i: 1, d: "Видел(а) код, что-то пробовал(а)" },
+    { v: "confident", t: "🔥 В целом уверен(а)", i: 2, d: "Могу писать простые программы" },
+    { v: "guru", t: "👑 Гуру", i: 3, d: "Пишу код уверенно, без стеснения" }
+  ];
+
+  /* Цель обучения */
+  var GOALS = [
+    { v: "career", t: "💼 Работа и карьера" },
+    { v: "study", t: "🎓 Учёба" },
+    { v: "hobby", t: "🎮 Хобби, для себя" },
+    { v: "project", t: "🚀 Свой проект" }
+  ];
+
+  /* Занятость (минут в день) — влияет на pace в mentor */ 
+  var TIMES = [
+    { v: 15, t: "☘ 15 минут в день" },
+    { v: 30, t: "⚡ 30 минут в день" },
+    { v: 60, t: "🔥 1 час в день" },
+    { v: 120, t: "🎖 2 часа и больше" }
+  ];
+
+  var q = function (s) { return document.querySelector(s); };
+
+  function buildCube() {
+    var cube = document.getElementById("cube3d");
+    if (!cube) { return; }
+    var i, face, eyes, eye, pupil;
+    for (i = 1; i <= 6; i++) {
+      face = document.createElement("div");
+      face.className = "face f" + i;
+      if (i === 1) {
+        eyes = document.createElement("div");
+        eyes.className = "eyes";
+        for (var j = 0; j < 2; j++) {
+          eye = document.createElement("div");
+          eye.className = "eye";
+          pupil = document.createElement("div");
+          pupil.className = "pupil";
+          eye.appendChild(pupil);
+          eyes.appendChild(eye);
+        }
+        face.appendChild(eyes);
+      }
+      cube.appendChild(face);
+    }
+  }
+
+  function h(s) {
+    var x = 2166136261;
+    for (var i = 0; i < s.length; i++) {
+      x ^= s.charCodeAt(i);
+      x = (x * 16777619) >>> 0;
+    }
+    return x.toString(16);
+  }
+  function loadUsers() { return LD.get(KEY, {}) || {}; }
+  function saveUsers(u) { LD.set(KEY, u); }
+  function say(m) { var e = q("#err"); if (e) { e.textContent = m || ""; } }
+
+  function renderAuth() {
+    var box = q("#box");
+    box.innerHTML = "";
+    var title = document.createElement("div");
+    title.className = "title";
+    title.setAttribute("data-ico", "✨");
+    title.textContent = mode === "login" ? "Вход" : "Регистрация";
+    box.appendChild(title);
+    var sub = document.createElement("div");
+    sub.className = "sub";
+    sub.textContent = mode === "login" ? "Введи логин и пароль" : "Придумай логин и пароль";
+    box.appendChild(sub);
+
+    var fLogin = document.createElement("div");
+    fLogin.className = "field";
+    var lblL = document.createElement("div");
+    lblL.className = "lbl";
+    lblL.textContent = "Логин";
+    fLogin.appendChild(lblL);
+    var inpLogin = document.createElement("input");
+    inpLogin.type = "text";
+    inpLogin.id = "login";
+    inpLogin.placeholder = "например, masha123";
+    inpLogin.autocomplete = "username";
+    fLogin.appendChild(inpLogin);
+    box.appendChild(fLogin);
+
+    var fPass = document.createElement("div");
+    fPass.className = "field";
+    var lblP = document.createElement("div");
+    lblP.className = "lbl";
+    lblP.textContent = "Пароль";
+    fPass.appendChild(lblP);
+    var inpPass = document.createElement("input");
+    inpPass.type = "password";
+    inpPass.id = "pass";
+    inpPass.placeholder = "минимум 4 символа";
+    inpPass.autocomplete = mode === "login" ? "current-password" : "new-password";
+    fPass.appendChild(inpPass);
+    box.appendChild(fPass);
+
+    var err = document.createElement("div");
+    err.className = "err";
+    err.id = "err";
+    box.appendChild(err);
+
+    var go = document.createElement("button");
+    go.className = "btn";
+    go.type = "button";
+    go.textContent = mode === "login" ? "Войти" : "Создать аккаунт";
+    box.appendChild(go);
+
+    var toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "link";
+    toggle.id = "btnMode";
+    toggle.textContent = mode === "login" ? "Нет аккаунта? Зарегистрироваться" : "Уже есть аккаунт? Войти";
+    box.appendChild(toggle);
+
+    function enterKey(ev) { if (ev.key === "Enter" || ev.keyCode === 13) { go.click(); } }
+    inpLogin.addEventListener("keydown", enterKey);
+    inpPass.addEventListener("keydown", enterKey);
+    toggle.addEventListener("click", function () {
+      mode = mode === "login" ? "register" : "login";
+      renderAuth();
+    });
+
+    go.addEventListener("click", function () {
+      var login = inpLogin.value.trim();
+      var pass = inpPass.value;
+      if (!login || !pass) { say("Заполни оба поля"); return; }
+      if (login.length < 3) { say("Логин слишком короткий (мин. 3 символа)"); return; }
+      if (pass.length < 4) { say("Пароль слишком короткий (мин. 4 символа)"); return; }
+      if (/[^A-Za-z0-9_.-]/.test(login)) { say("Логин: только буквы, цифры, . _ -"); return; }
+
+      var users = loadUsers();
+      var hp = h(pass);
+      if (mode === "register") {
+        if (users[login]) { say("Логин уже занят. Попробуй другой"); return; }
+        users[login] = { p: hp, at: Date.now() };
+        saveUsers(users);
+        LD.set(SESSION, login);
+        renderSurvey(login, true);
+        return;
+      }
+      var u = users[login];
+      if (!u) { say("Такого логина нет"); return; }
+      if (u.p !== hp) { say("Неверный пароль"); return; }
+      LD.set(SESSION, login);
+      var prof = LD.get(PROFILE, null);
+      if (prof) { goMain(login); } else { renderSurvey(login, false, true); }
+    });
+  }
+
+  /* ================= ОПРОС ПРИ РЕГИСТРАЦИИ ================= */
+  function renderSurvey(login, isNew, isLogin) {
+    q("#card").scrollTop = 0;
+    var box = q("#box");
+    box.innerHTML = "";
+
+    var state = {
+      step: 0,
+      login: login,
+      isNew: isNew,
+      fio: "",
+      goal: "career",
+      langs: [],
+      level: "novice",
+      time: 30,
+      aiAnswers: {},   /* {"python": {0: 2, 1: 1, ...}} — персональный опрос ИИ */
+      aiTasks: {}      /* {"python": [индексы решённых задач] } */
+    };
+
+    var STEPS = [
+      { key: "fio", title: "Как тебя зовут?", ico: "🙋", hint: "ФИО или просто имя — как к тебе обращаться" },
+      { key: "goal", title: "Зачем учишь программирование?", ico: "🎯", hint: "Это поможет ИИ выбрать вектор тренировок" },
+      { key: "langs", title: "Что хочешь изучить?", ico: "🧩", hint: "Можно выбрать несколько языков" },
+      { key: "level", title: "Как хорошо ты их знаешь?", ico: "📈", hint: "От этого зависит старт (он не навсегда) и план ИИ" },
+      { key: "time", title: "Сколько времени готов(а) уделять?", ico: "⏱", hint: "ИИ подстроит ритм и объём заданий" },
+      { key: "ai", title: "Персональный опрос ИИ", ico: "🧠", hint: "ИИ оценит реальный уровень и найдёт пробелы (для не-новичков)" },
+      { key: "tasks", title: "Персональные задания ИИ", ico: "🚀", hint: "ИИ выбрал стартовые задания под твой уровень" }
+    ];
+
+    function visibleSteps() {
+      /* новичок: без ИИ-опроса и ИИ-заданий */
+      var last = 5;
+      for (var i = 0; i < LEVELS.length; i++) {
+        if (LEVELS[i].v === state.level) {
+          if (LEVELS[i].i === 0) { last = 5; } else { last = 7; }
+        }
+      }
+      return last;
+    }
+
+    function bubbles() {
+      var total = visibleSteps();
+      var row = document.createElement("div");
+      row.className = "stepdots";
+      for (var i = 0; i < total; i++) {
+        var d = document.createElement("i");
+        if (i === state.step) { d.className = "on"; }
+        row.appendChild(d);
+      }
+      box.appendChild(row);
+    }
+
+    function progress() {
+      var total = visibleSteps();
+      var p = document.createElement("div");
+      p.className = "prog";
+      var i = document.createElement("i");
+      i.style.setProperty("--w", Math.round(((state.step + 1) / total) * 100) + "%");
+      p.appendChild(i);
+      box.appendChild(p);
+    }
+
+    function finishStep() {
+      state.step++;
+      state.step = Math.min(state.step, visibleSteps());
+      renderStep();
+    }
+    function backStep() {
+      state.step--;
+      if (state.step < 0) { state.step = 0; }
+      renderStep();
+    }
+    function canBack() {
+      return state.step > 0;
+    }
+
+    function renderStep() {
+      box.innerHTML = "";
+      q("#card").scrollTop = 0;
+      bubbles();
+      progress();
+      var st = STEPS[state.step];
+      if (!st || state.step >= visibleSteps()) { finishOk(); return; }
+
+      var bubble = document.createElement("div");
+      bubble.className = "bub";
+      bubble.innerHTML = "🤖 <span>Я твой <b>ИИ-наставник</b>. Вопрос <b>" + (state.step + 1) + "</b> из " + visibleSteps() + ".</span>";
+      box.appendChild(bubble);
+
+      var wrap = document.createElement("div");
+      wrap.className = "qstep";
+      var h3 = document.createElement("h3");
+      h3.textContent = st.ico + " " + st.title;
+      wrap.appendChild(h3);
+      var sub = document.createElement("div");
+      sub.className = "hint";
+      sub.textContent = st.hint;
+      wrap.appendChild(sub);
+
+      var navRow = function (primaryText, primaryFn) {
+        var row = document.createElement("div");
+        row.className = "btn-row";
+        if (canBack()) {
+          var back = document.createElement("button");
+          back.type = "button";
+          back.className = "btn ghost";
+          back.textContent = "← Назад";
+          back.addEventListener("click", backStep);
+          row.appendChild(back);
+        }
+        var fwd = document.createElement("button");
+        fwd.type = "button";
+        fwd.className = "btn";
+        fwd.textContent = primaryText;
+        fwd.addEventListener("click", function () {
+          if (fwd.disabled) { return; }
+          fwd.disabled = true;
+          primaryFn();
+          setTimeout(function () { fwd.disabled = false; }, 120);
+        });
+        row.appendChild(fwd);
+        wrap.appendChild(row);
+        return fwd;
+      };
+
+      if (st.key === "fio") {
+        var inp = document.createElement("input");
+        inp.type = "text";
+        inp.placeholder = "Иван Иванов";
+        inp.value = state.fio;
+        wrap.appendChild(inp);
+        navRow("Далее →", function () {
+          var v = inp.value.trim();
+          if (v.length < 2) { smallDone(wrap, "Напиши, как тебя зовут"); return; }
+          state.fio = v;
+          finishStep();
+        });
+        enterBind(inp, function () { var b = wrap.querySelector(".btn-row .btn:last-child"); if (b) { b.click(); } });
+
+      } else if (st.key === "goal") {
+        (function () {
+          var row = document.createElement("div");
+          row.className = "chiprow";
+          for (var i = 0; i < GOALS.length; i++) {
+            (function (g) {
+              var ch = document.createElement("button");
+              ch.type = "button";
+              ch.className = "cchip" + (state.goal === g.v ? " sel" : "");
+              ch.textContent = g.t;
+              ch.addEventListener("click", function () {
+                state.goal = g.v;
+                var all = row.querySelectorAll(".cchip"), z;
+                for (z = 0; z < all.length; z++) { all[z].className = "cchip"; }
+                ch.className = "cchip sel";
+              });
+              row.appendChild(ch);
+            })(GOALS[i]);
+          }
+          wrap.appendChild(row);
+          navRow("Далее →", finishStep);
+        })();
+
+      } else if (st.key === "langs") {
+        var row = document.createElement("div");
+        row.className = "chiprow";
+        for (var i = 0; i < CATALOG.length; i++) {
+          (function (c) {
+            var ch = document.createElement("button");
+            ch.type = "button";
+            ch.className = "cchip" + (state.langs.indexOf(c.id) >= 0 ? " sel" : "");
+            ch.textContent = c.icon + " " + c.name;
+            ch.addEventListener("click", function () {
+              var has = state.langs.indexOf(c.id) >= 0;
+              if (has) {
+                state.langs.splice(state.langs.indexOf(c.id), 1);
+                ch.className = "cchip";
+              } else {
+                state.langs.push(c.id);
+                ch.className = "cchip sel";
+              }
+            });
+            row.appendChild(ch);
+          })(CATALOG[i]);
+        }
+        wrap.appendChild(row);
+        navRow("Далее →", function () {
+          if (!state.langs.length) { smallDone(wrap, "Выбери хотя бы один язык"); return; }
+          finishStep();
+        });
+
+      } else if (st.key === "level") {
+        var lrow = document.createElement("div");
+        lrow.className = "chiprow-v";
+        lrow.style.display = "flex";
+        lrow.style.flexDirection = "column";
+        lrow.style.gap = "6px";
+        for (var j = 0; j < LEVELS.length; j++) {
+          (function (lv) {
+            var ch = document.createElement("button");
+            ch.type = "button";
+            ch.className = "cchip" + (state.level === lv.v ? " sel" : "");
+            ch.style.textAlign = "left";
+            ch.style.lineHeight = "1.3";
+            ch.textContent = lv.t + " — " + lv.d;
+            ch.addEventListener("click", function () {
+              state.level = lv.v;
+              var all = lrow.querySelectorAll(".cchip"), z;
+              for (z = 0; z < all.length; z++) { all[z].className = "cchip"; }
+              ch.className = "cchip sel";
+            });
+            lrow.appendChild(ch);
+          })(LEVELS[j]);
+        }
+        wrap.appendChild(lrow);
+        navRow("Далее →", function () {
+          /* новичок: опрос и задания ИИ пропускаем автоматически (visibleSteps) */
+          finishStep();
+        });
+
+      } else if (st.key === "time") {
+        (function () {
+          var row = document.createElement("div");
+          row.className = "chiprow";
+          for (var i = 0; i < TIMES.length; i++) {
+            (function (tm) {
+              var ch = document.createElement("button");
+              ch.type = "button";
+              ch.className = "cchip" + (state.time === tm.v ? " sel" : "");
+              ch.textContent = tm.t;
+              ch.addEventListener("click", function () {
+                state.time = tm.v;
+                var all = row.querySelectorAll(".cchip"), z;
+                for (z = 0; z < all.length; z++) { all[z].className = "cchip"; }
+                ch.className = "cchip sel";
+              });
+              row.appendChild(ch);
+            })(TIMES[i]);
+          }
+          wrap.appendChild(row);
+          navRow("Далее →", function () {
+            if (visibleSteps() <= state.step + 1) { finishOk(); return; }
+            finishStep();
+          });
+        })();
+
+      } else if (st.key === "ai") {
+        if (typeof state.aiCursor !== "number") { state.aiCursor = 0; }
+        if (!state.langs.length || state.aiCursor >= state.langs.length) { finishStep(); return; }
+        var curLang = langById(state.langs[state.aiCursor]);
+        if (!curLang) { state.aiCursor++; finishStep(); return; }
+        addAiSurvey(wrap, state, curLang);
+        navRow(state.aiCursor < state.langs.length - 1 ? "Дальше (по следующему языку) →" : "Дальше →", function () {
+          state.aiCursor++;
+          if (state.aiCursor >= state.langs.length) { finishStep(); }
+          else { renderStep(); }
+        });
+
+      } else if (st.key === "tasks") {
+        addAiTasks(wrap, state);
+        navRow("Готово — открыть наставника →", finishStep);
+      }
+
+      var b = wrap.querySelector(".btn-row .btn:last-child");
+      if (b) { b.scrollIntoView({ block: "nearest" }); }
+      box.appendChild(wrap);
+    }
+
+    function enterBind(inp, fn) {
+      inp.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.keyCode === 13) { fn(); }
+      });
+    }
+    function smallDone(parent, msg) {
+      var d = document.createElement("div");
+      d.className = "done-small";
+      d.textContent = msg;
+      parent.appendChild(d);
+      setTimeout(function () { if (d.parentNode) { d.parentNode.removeChild(d); } }, 1600);
+    }
+
+    /* ===== ПЕРСОНАЛЬНЫЙ ОПРОС ИИ (для не-новичков) ===== */
+    function aiStyleAnswers() {
+      var base = { novice: 0, some: 1, confident: 2, guru: 3 };
+      return base[state.level] || 1;
+    }
+
+    /* Пул вопросов, привязанный к языку: у типизированных языков своя тематика */
+    function qPool(langId) {
+      var script = [
+        { q: "Что делает print/console.log?", o: ["Выводит текст", "Читает файл", "Складывает числа"], k: 0 },
+        { q: "Как объявить переменную, которую нельзя менять?", o: ["const/final", "let/var", "нельзя"], k: 0 },
+        { q: "Что такое условие в коде?", o: ["Ветка выполнения", "Цикл", "Функция"], k: 0 },
+        { q: "Чем опасен бесконечный цикл?", o: ["Зависание программы", "Ничем", "Медленный код"], k: 0 },
+        { q: "Что делает break в цикле?", o: ["Останавливает цикл", "Пропускает шаг", "Завершает программу"], k: 0 },
+        { q: "Какая структура хранит много значений?", o: ["Массив/список", "Число", "Строка"], k: 0 },
+        { q: "Для чего нужны функции?", o: ["Переиспользование кода", "Ускорение ПК", "Рисование"], k: 0 },
+        { q: "Что такое return?", o: ["Возврат значения", "Ошибка", "Печать"], k: 0 },
+        { q: "Как поймать ошибку в коде?", o: ["try/catch", "Нет способа", "через print"], k: 0 }
+      ];
+      var typed = [
+        { q: "Что такое тип данных переменной?", o: ["Какие значения в ней лежат", "Имя переменной", "Скорость"], k: 0 },
+        { q: "Зачем компилятор?", o: ["Превращает код в исполняемый", "Печатает текст", "Чинит ошибки"], k: 0 },
+        { q: "Что делает оператор ==?", o: ["Сравнивает значения", "Присваивает", "Складывает"], k: 0 },
+        { q: "Как объявить константу?", o: ["const/final/val", "let", "var"], k: 0 },
+        { q: "Что такое массив?", o: ["Набор элементов одного типа", "Строка", "Число"], k: 0 },
+        { q: "Что делает return?", o: ["Возвращает значение из функции", "Печатает", "Останавливает программу"], k: 0 },
+        { q: "Какой цикл выполнится как минимум один раз?", o: ["do…while", "for", "while"], k: 0 },
+        { q: "Что такое исключение?", o: ["Ошибка, которую можно поймать", "Особый тип", "Условие"], k: 0 },
+        { q: "Зачем нужны функции?", o: ["Переиспользование кода", "Красивые названия", "Ускорение"], k: 0 }
+      ];
+      var web = [
+        { q: "Что делает тег <a href>?", o: ["Ссылка на другую страницу", "Картинка", "Заголовок"], k: 0 },
+        { q: "Где лучше хранить стили?", o: ["В CSS-файле", "Внутри текста", "Нигде"], k: 0 },
+        { q: "Что такое атрибут тега?", o: ["Дополнительная настройка тега", "Имя тега", "Текст внутри"], k: 0 },
+        { q: "Для чего нужен <script>?", o: ["Подключить JS-код", "Сделать таблицу", "Вставить картинку"], k: 0 },
+        { q: "Чем div отличается от span?", o: ["Блочный vs строчный", "Ничем", "Цветом"], k: 0 },
+        { q: "Что делает CSS-свойство display: none?", o: ["Скрывает элемент", "Делает жирным", "Добавляет рамку"], k: 0 },
+        { q: "Как выбрать элемент по классу в CSS?", o: [".class", "#class", "class()"], k: 0 },
+        { q: "Что такое responsive-вёрстка?", o: ["Адаптация под экраны", "Тёмная тема", "Скорость загрузки"], k: 0 },
+        { q: "Какой тег делает строку заголовком?", o: ["<h1>", "<p>", "<b>"], k: 0 }
+      ];
+      var data = [
+        { q: "Что делает SELECT из таблицы?", o: ["Возвращает строки", "Удаляет таблицу", "Редактирует"], k: 0 },
+        { q: "Что фильтрует WHERE?", o: ["Только нужные строки", "Все строки", "Колонки"], k: 0 },
+        { q: "Как отсортировать результат?", o: ["ORDER BY", "SORT BY", "GROUP BY"], k: 0 },
+        { q: "Что такое первичный ключ?", o: ["Уникальный идентификатор записи", "Пароль", "Имя таблицы"], k: 0 },
+        { q: "Как объединить две таблицы?", o: ["JOIN", "MERGE", "ADD"], k: 0 },
+        { q: "Чем COUNT(*) отличается от COUNT(колонка)?", o: ["Считает все строки vs не-NULL", "Ничем", "Один быстрее"], k: 0 },
+        { q: "Что делает INSERT?", o: ["Добавляет запись", "Удаляет", "Выбирает"], k: 0 },
+        { q: "Как выбрать уникальные значения?", o: ["SELECT DISTINCT", "SELECT UNIQUE", "SELECT ONLY"], k: 0 },
+        { q: "Что такое JOIN без условий?", o: ["Декартово произведение", "Ошибка", "Пустой результат"], k: 0 }
+      ];
+      var typedIds = ["cpp", "java", "go", "rust", "typescript"];
+      var i;
+      for (i = 0; i < typedIds.length; i++) { if (typedIds[i] === langId) { return typed; } }
+      if (langId === "html" || langId === "php" || langId === "javascript") { return web; }
+      if (langId === "sql") { return data; }
+      return script;
+    }
+
+    function addAiSurvey(wrap, st, lang) {
+      var h = document.createElement("div");
+      h.className = "hint";
+      h.textContent = lang.icon + " " + lang.name + " — ИИ задаёт вопросы под уровень";
+      h.style.marginTop = "2px";
+      wrap.appendChild(h);
+
+      var gen = function (seed) {
+        var a = (seed >>> 0) || 1;
+        return function () {
+          a |= 0; a = (a + 0x6D2B79F5) | 0;
+          var t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      };
+      var rng = gen(lang.id.length * 7919 + aiStyleAnswers() * 131 + state.level.length * 7);
+      var pool = qPool(lang.id);
+      var picked = [];
+      var idx = 0;
+      while (picked.length < 3 && idx < 30) {
+        var pi = Math.floor(rng() * pool.length);
+        var found = false;
+        for (var s = 0; s < picked.length; s++) { if (picked[s] === pi) { found = true; } }
+        if (!found) { picked.push(pi); }
+        idx++;
+      }
+      if (!st.aiAnswers[lang.id]) { st.aiAnswers[lang.id] = {}; }
+      for (var p = 0; p < picked.length; p++) {
+        (function (qi, qn) {
+          var label = document.createElement("label");
+          label.className = "q";
+          label.innerHTML = (p + 1) + ". <b>" + esc(qn.q) + "</b>";
+          wrap.appendChild(label);
+          var row = document.createElement("div");
+          row.className = "chiprow";
+          for (var o = 0; o < qn.o.length; o++) {
+            (function (oi, opt) {
+              var ch = document.createElement("button");
+              ch.type = "button";
+              ch.className = "cchip" + (st.aiAnswers[lang.id][p] === oi ? " sel" : "");
+              ch.textContent = opt;
+              ch.addEventListener("click", function () {
+                st.aiAnswers[lang.id][p] = oi;
+                var all = row.querySelectorAll(".cchip"), z;
+                for (z = 0; z < all.length; z++) { all[z].className = "cchip"; }
+                ch.className = "cchip sel";
+              });
+              row.appendChild(ch);
+            })(o, qn.o[o]);
+          }
+          wrap.appendChild(row);
+        })(p, pool[picked[p]]);
+      }
+      var done = document.createElement("div");
+      done.className = "done-small";
+      done.textContent = "Ответы ИИ учтёт при выборе заданий";
+      wrap.appendChild(done);
+    }
+
+    function langById(id) {
+      for (var i = 0; i < CATALOG.length; i++) {
+        if (CATALOG[i].id === id) { return CATALOG[i]; }
+      }
+      return null;
+    }
+
+    /* Уверенность ИИ (0..1) из ответов по выбранным языкам */
+    function aiConfidence() {
+      var qn = 0, ok = 0, langId;
+      for (langId in state.aiAnswers) {
+        if (state.aiAnswers.hasOwnProperty(langId)) {
+          var qs = state.aiAnswers[langId];
+          var ci, ans, cq = null;
+          /* найдём пул для проверки правильных ответов */
+          for (var j = 0; j < CATALOG.length; j++) { if (CATALOG[j].id === langId) { cq = CATALOG[j]; } }
+          var pool = qPool(langId);
+          /* соберём правильные индексы по порядку отобранных вопросов */
+          var picked = collectPicked(langId);
+          for (ci = 0; ci < 3; ci++) {
+            if (qs[ci] === undefined) { continue; }
+            qn++;
+            var qIndex = picked[ci];
+            if (qIndex !== undefined && pool[qIndex] && qs[ci] === pool[qIndex].k) { ok++; }
+          }
+        }
+      }
+      if (!qn) { return 0.5; }
+      return ok / qn;
+    }
+
+    function collectPicked(langId) {
+      /* детерминированно повторяем выбор тех же 3 индексов */
+      var gen = function (seed) {
+        var a = (seed >>> 0) || 1;
+        return function () {
+          a |= 0; a = (a + 0x6D2B79F5) | 0;
+          var t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      };
+      var lv = null;
+      for (var li = 0; li < LEVELS.length; li++) { if (LEVELS[li].v === state.level) { lv = LEVELS[li].i; } }
+      var rng = gen(langId.length * 7919 + (lv || 1) * 131 + state.level.length * 7);
+      var pool = qPool(langId);
+      var picked = [];
+      var idx = 0;
+      while (picked.length < 3 && idx < 30) {
+        var pi = Math.floor(rng() * pool.length);
+        var found = false;
+        for (var s = 0; s < picked.length; s++) { if (picked[s] === pi) { found = true; } }
+        if (!found) { picked.push(pi); }
+        idx++;
+      }
+      return picked;
+    }
+
+    /* ===== ПЕРСОНАЛЬНЫЕ ЗАДАНИЯ ИИ ===== */
+    function addAiTasks(wrap, st) {
+      var langId = null;
+      for (var i = 0; i < CATALOG.length; i++) {
+        if (st.langs.indexOf(CATALOG[i].id) >= 0) { langId = CATALOG[i].id; break; }
+      }
+      if (!langId) { finishOk(); return; }
+      if (!st.aiTasks[langId]) { st.aiTasks[langId] = []; }
+
+      var conf = aiConfidence();
+      var tasks = taskTemplates(langId, conf);
+      var shown = tasks.slice(0, 3);
+      for (var t = 0; t < shown.length; t++) {
+        (function (task, ti) {
+          var blk = document.createElement("div");
+          blk.className = "taskblk";
+          var hd = document.createElement("div");
+          hd.className = "th";
+          hd.textContent = (ti + 1) + ". " + task.title;
+          blk.appendChild(hd);
+          var code = document.createElement("pre");
+          code.textContent = task.starter;
+          blk.appendChild(code);
+          var hint = document.createElement("div");
+          hint.className = "thn";
+          hint.textContent = "💡 " + task.hint;
+          blk.appendChild(hint);
+          var chk = document.createElement("button");
+          chk.type = "button";
+          chk.className = "cchip" + (st.aiTasks[langId].indexOf(ti) >= 0 ? " sel" : "");
+          chk.textContent = st.aiTasks[langId].indexOf(ti) >= 0 ? "✓ Решено" : "Решил(а)";
+          chk.addEventListener("click", function () {
+            var has = st.aiTasks[langId].indexOf(ti) >= 0;
+            if (has) {
+              st.aiTasks[langId].splice(st.aiTasks[langId].indexOf(ti), 1);
+              chk.textContent = "Решил(а)";
+              chk.className = "cchip";
+            } else {
+              st.aiTasks[langId].push(ti);
+              chk.textContent = "✓ Решено";
+              chk.className = "cchip sel";
+            }
+          });
+          blk.appendChild(chk);
+          wrap.appendChild(blk);
+        })(shown[t], t);
+      }
+      var note = document.createElement("div");
+      note.className = "done-small";
+      note.textContent = "ИИ учёл твои ответы в опросе: " + Math.round(conf * 100) + "% уверенности";
+      wrap.appendChild(note);
+    }
+
+    function taskTemplates(langId, conf) {
+      var t = function (title, starter, hint) { return { title: title, starter: starter, hint: hint }; };
+      var hard = !!conf && conf >= 0.8;
+      if (langId === "python") {
+        var base = [
+          t("Выведи приветствие", "name = \"Ира\"\nprint(\"Привет, \" + name)", "Склей две строки знаком + и выведи через print"),
+          t("Сумма двух чисел", "a = 7\nb = 5\nprint(a + b)", "Оператор + умеет складывать числа")
+        ];
+        if (hard) { base.unshift(t("Чётное или нет", "n = 4\nif n % 2 == 0:\n    print(\"чётное\")\nelse:\n    print(\"нечётное\")", "Оператор % даёт остаток от деления")); }
+        return base;
+      }
+      if (langId === "javascript") {
+        var basej = [
+          t("Выведи приветствие", "let name = \"Ира\";\nconsole.log(\"Привет, \" + name);", "Склей строки через + и выведи в консоль"),
+          t("Сумма двух чисел", "let a = 7, b = 5;\nconsole.log(a + b);", "Сложи a и b и выведи")
+        ];
+        if (hard) { basej.unshift(t("Чётное или нет", "let n = 4;\nif (n % 2 === 0) { console.log(\"чётное\"); } else { console.log(\"нечётное\"); }", "Оператор % даёт остаток от деления")); }
+        return basej;
+      }
+      if (langId === "typescript") {
+        var baset = [
+          t("Типизированная переменная", "let name: string = \"Ира\";\nconsole.log(\"Привет, \" + name);", "Тип string пишется после двоеточия"),
+          t("Сумма чисел", "let a: number = 7, b: number = 5;\nconsole.log(a + b);", "Сложи числа и выведи")
+        ];
+        if (hard) { baset.unshift(t("Тип и условие", "let n: number = 4;\nif (n % 2 === 0) { console.log(\"чётное\"); } else { console.log(\"нечётное\"); }", "% даёт остаток, сравнение через === ")); }
+        return baset;
+      }
+      if (langId === "cpp") {
+        var basec = [
+          t("Выведи приветствие", "string name = \"Ира\";\ncout << \"Привет, \" << name;", "cout << выводит текст"),
+          t("Сумма двух чисел", "int a = 7, b = 5;\ncout << a + b;", "Сложи числа и выведи через cout")
+        ];
+        if (hard) { basec.unshift(t("Чётное или нет", "int n = 4;\nif (n % 2 == 0) { cout << \"чётное\"; } else { cout << \"нечётное\"; }", "% даёт остаток от деления")); }
+        return basec;
+      }
+      if (langId === "java") {
+        var basej2 = [
+          t("Выведи приветствие", "String name = \"Ира\";\nSystem.out.println(\"Привет, \" + name);", "println выводит строку"),
+          t("Сумма двух чисел", "int a = 7, b = 5;\nSystem.out.println(a + b);", "Сложи числа и выведи")
+        ];
+        if (hard) { basej2.unshift(t("Чётное или нет", "int n = 4;\nif (n % 2 == 0) { System.out.println(\"чётное\"); } else { System.out.println(\"нечётное\"); }", "% даёт остаток от деления")); }
+        return basej2;
+      }
+      if (langId === "go") {
+        var baseg = [
+          t("Выведи приветствие", "name := \"Ира\"\nfmt.Println(\"Привет, \" + name)", ":= создаёт переменную, Println печатает"),
+          t("Сумма двух чисел", "a, b := 7, 5\nfmt.Println(a + b)", "Сложи числа и выведи")
+        ];
+        if (hard) { baseg.unshift(t("Чётное или нет", "n := 4\nif n%2 == 0 { fmt.Println(\"чётное\") } else { fmt.Println(\"нечётное\") }", "% даёт остаток от деления")); }
+        return baseg;
+      }
+      if (langId === "rust") {
+        var baser = [
+          t("Выведи приветствие", "let name = \"Ира\";\nprintln!(\"Привет, {}\", name);", "println!() выводит макросом, {} — подстановка"),
+          t("Сумма двух чисел", "let a = 7; let b = 5;\nprintln!(\"{}\", a + b);", "Сложи числа и выведи")
+        ];
+        if (hard) { baser.unshift(t("Чётное или нет", "let n = 4;\nif n % 2 == 0 { println!(\"чётное\"); } else { println!(\"нечётное\"); }", "% даёт остаток от деления")); }
+        return baser;
+      }
+      if (langId === "php") {
+        var basep = [
+          t("Выведи приветствие", "$name = \"Ира\";\necho \"Привет, $name\";", "Переменные в PHP начинаются с $, echo печатает"),
+          t("Сумма двух чисел", "$a = 7; $b = 5;\necho $a + $b;", "Сложи числа и выведи")
+        ];
+        if (hard) { basep.unshift(t("Чётное или нет", "$n = 4;\nif ($n % 2 == 0) { echo \"чётное\"; } else { echo \"нечётное\"; }", "% даёт остаток от деления")); }
+        return basep;
+      }
+      if (langId === "html") {
+        var baseh = [
+          t("Страница с заголовком", "<h1>Привет!</h1>\n<p>Меня зовут Ира.</p>", "h1 — заголовок, p — абзац текста"),
+          t("Заголовки разных уровней", "<h1>Главный</h1>\n<h2>Подзаголовок</h2>", "h1 — самый крупный, h2 — меньше")
+        ];
+        if (hard) { baseh.unshift(t("Ссылка и класс", "<a class=\"btn\" href=\"#\">Нажми</a>", "a — ссылка, class задаёт стиль")); }
+        return baseh;
+      }
+      if (langId === "sql") {
+        var bases = [
+          t("Выбери все записи", "SELECT * FROM users;", "* означает «все колонки»"),
+          t("Выбери по условию", "SELECT name FROM users\nWHERE age > 18;", "WHERE фильтрует строки")
+        ];
+        if (hard) { bases.unshift(t("Сортировка", "SELECT name FROM users\nORDER BY age;", "ORDER BY сортирует по колонке")); }
+        return bases;
+      }
+      return [
+        t("Выведи приветствие", "print(\"Привет!\")", "Начни с вывода текста"),
+        t("Сложи числа", "a = 7\nb = 5\nprint(a + b)", "Складывай числа через +")
+      ];
+    }
+
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    /* ===== СОХРАНЕНИЕ + переход в основной сайт ===== */
+    function finishOk() {
+      if (!state.fio) { state.fio = state.login || "Ученик"; }
+      var goalName = state.goal;
+      for (var gi = 0; gi < GOALS.length; gi++) { if (GOALS[gi].v === state.goal) { goalName = GOALS[gi].t; } }
+      var prof = {
+        login: state.login,
+        name: state.fio,
+        goal: state.goal,
+        goalName: goalName,
+        langs: state.langs.slice(),
+        level: state.level,
+        time: state.time,
+        aiAnswers: state.aiAnswers,
+        aiTasks: state.aiTasks,
+        isNew: state.isNew,
+        at: Date.now()
+      };
+      LD.set(PROFILE, prof);
+      LD.set(SESSION, state.login);
+
+      /* подготовим ключи для основного сайта mentor.html */
+      tut.setRaw("authed", "local");         /* рег-флаг входа (см. onboard.js authOk) */
+      tut.setRaw("authlogin", state.login);
+      tut.set("regdone", prof);              /* профиль для основного сайта */
+      var lvlIdx = 0;
+      for (var li = 0; li < LEVELS.length; li++) { if (LEVELS[li].v === state.level) { lvlIdx = LEVELS[li].i; } }
+      var conf = aiConfidence();
+      var xp0 = lvlIdx * 40 + Math.round(conf * 20);  /* стартовый XP по уровню + уверенность ИИ */
+      tut.set("startrank", { xp: xp0, q: 0, dt: Date.now() });
+      tut.set("lvl", state.level);
+      tut.set("pace", state.time);
+
+      var box = q("#box");
+      box.innerHTML = "";
+      var done = document.createElement("div");
+      done.className = "done";
+      done.appendChild(el("div", "smile", "😄"));
+      done.appendChild(el("div", "done-name", "Отлично, " + state.fio + "!"));
+      done.appendChild(el("div", "done-sub", "ИИ учёл цель «" + goalName + "» и " + state.time + " минут в день. Открываем наставника…"));
+      box.appendChild(done);
+
+      setTimeout(function () {
+        try { window.location.href = "mentor.html"; } catch (e) {}
+      }, 1200);
+    }
+
+    function el(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) { e.className = cls; }
+      if (text != null) { e.appendChild(document.createTextNode(text)); }
+      return e;
+    }
+
+    renderStep();
+  }
+
+  /* ===== уже зарегистрирован с профилем → сразу в основной сайт ===== */
+  function goMain(login) {
+    tut.setRaw("authed", "local");
+    tut.setRaw("authlogin", login);
+    var prof = LD.get(PROFILE, null);
+    if (prof) { tut.set("regdone", prof); }
+    try { window.location.href = "mentor.html"; } catch (e) {}
+  }
+
+  q("#btnStart").addEventListener("click", function () {
+    document.getElementById("splash").className += " scene";
+    var box = q("#box");
+    if (!box.innerHTML) { renderAuth(); }
+  });
+
+  function boot() {
+    buildCube();
+    var cur = LD.getRaw(SESSION);
+    var prof = LD.get(PROFILE, null);
+    if (cur && prof) {
+      goMain(cur);
+      return;
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

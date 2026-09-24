@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Интерактивный курс Python с уроками, задачами, тестами и онлайн-редактором. Билингва: RU / EN.">
+  <title>Python Путь — учи Python интерактивно</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-logo">Py</span>
+        <span class="brand-name" data-i18n="brand">Python Путь</span>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a href="#/home" class="nav-link" data-route="home" data-i18n="nav.home">Главная</a>
+        <a href="#/lessons" class="nav-link" data-route="lessons" data-i18n="nav.lessons">Уроки</a>
+        <a href="#/tasks" class="nav-link" data-route="tasks" data-i18n="nav.tasks">Задания</a>
+        <a href="#/playground" class="nav-link" data-route="playground" data-i18n="nav.playground">Песочница</a>
+        <a href="#/quiz" class="nav-link" data-route="quiz" data-i18n="nav.quiz">Тесты</a>
+        <a href="#/cheat" class="nav-link" data-route="cheat" data-i18n="nav.cheat">Шпаргалка</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+          <button class="lang-btn active" data-lang="ru">RU</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <div class="progress-mini" id="progressMini"></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <button class="burger" id="burger" aria-label="Menu">☰</button>
+      <main class="content" id="view"></main>
+      <footer class="footer" id="footer" data-i18n="footer">Сделано для тех, кто учит Python 🐍</footer>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Данные (содержимое сайта) -->
+  <script src="data/i18n.js"></script>
+  <script src="data/lessons.js"></script>
+  <script src="data/tasks.js"></script>
+  <script src="data/quiz.js"></script>
+  <script src="data/cheat.js"></script>
+
+  <!-- Модули -->
+  <script src="js/i18n.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/cheat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

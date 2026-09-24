@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI Наставник по программированию: бесконечные задачи для любого языка, проверка кода в браузере, прогресс, тесты и чат-объяснения. Работает офлайн.">
+<title>🤖 AI Наставник — учись любому языку</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+<link rel="stylesheet" href="css/mentor.css">
+  <link rel="stylesheet" href="css/neon.css">
+</head>
+<body>
+  <!-- AI-наставник: бесконечные задачи, проверка, прогресс, любой язык. -->
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-logo">🤖</span>
+        <span class="brand-name" id="brandName">AI Наставник</span>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="sidebar-footer">
+        <div class="lang-switch" id="langSwitch">
+          <button class="lang-btn active" data-lang="ru">RU</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="btn small" id="btnReset" title="Стереть аккаунт и начать заново (как в первый раз)">↺ Вход / Сброс</button>
+        <div class="progress-mini" id="progressMini"></div>
+      </div>
+    </aside>
+
+    <section class="main">
+      <button class="burger" id="burger" aria-label="Меню">☰</button>
+      <main class="content" id="view"></main>
+    </section>
+  </div>
+
+  <aside class="chat" id="chat">
+    <div class="chat-head">
+      <span class="ava">🤖</span>
+      <div>
+        <div class="nm">AI Наставник</div>
+        <div class="st"><span class="st-dot"></span><span id="chatStatus">онлайн</span></div>
+      </div>
+      <div style="margin-left:auto"><button class="btn small" id="chatClose">✕</button></div>
+    </div>
+    <div class="chat-modes">
+      <button class="chip" data-chat-mode="local">🧠 Локальный ИИ</button>
+      <button class="chip" data-chat-mode="online">🌐 Онлайн-ИИ</button>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-note" id="chatNote"></div>
+    <div class="chat-in">
+      <input id="chatInput" placeholder="Спроси меня о коде…" autocomplete="off">
+      <button class="send" id="chatSend">➤</button>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Движок (js/tutor.js): раннеры Python(Pyodide)/JS, проверка, прогресс, i18n -->
+  <script src="js/tutor.js"></script>
+  <!-- Контент наставника (data/tutor.js): бесконечные генераторы задач для любых языков + строки интерфейса -->
+  <script src="data/tutor.js"></script>
+  <!-- Каталог языков и курсов (data/courses.js): 14+ языков, ранги, онбординг-строки -->
+  <script src="data/courses.js"></script>
+<script src="data/ai-db.js"></script>
+  <!-- Аккаунты (js/auth.js): движок входа/регистрации (телефон/почта -> код, или PIN). Файл Интегратора. -->
+  <script src="js/auth.js"></script>
+  <!-- Карточка входа/регистрации (js/auth-ui.js): неоновый UI поверх MentorAuth. Файл Интегратора. -->
+  <script src="js/auth-ui.js"></script>
+  <!-- Интерфейс (js/mentor-ui.js): рендер, события, чат -->
+  <script src="js/mentor-ui.js"></script>
+  <!-- Аккаунты (js/auth.js): вход/регистрация по телефон/почте (код) и PIN; движок Интегратора -->
+  <!-- Неоновый онбординг (js/onboard.js): заставка, мастер выбора курсов, ранги -->
+  <script src="js/onboard.js"></script>
+  <script>
+    (function () {
+      function wireReset() {
+        var b = document.getElementById("btnReset");
+        if (!b) return;
+        b.addEventListener("click", function () {
+          var keys = ["auth", "auth.session", "adopted",
+            "reg.current", "reg.profile", "reg.users",
+            "tutor.authed", "tutor.authlogin", "tutor.regdone", "tutor.onboarded",
+            "tutor.startrank", "tutor.lvl", "tutor.pace", "tutor.courses", "tutor.progress", "tutor.xp"];
+          try {
+            for (var i = 0; i < keys.length; i++) { localStorage.removeItem(keys[i]); }
+          } catch (e) {}
+          location.href = "reg.html";
+        });
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", wireReset);
+      } else {
+        wireReset();
+      }
+    })();
+  </script>
+</body>
+</html>
