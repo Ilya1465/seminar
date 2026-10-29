@@ -1,0 +1,21 @@
+{% extends '_base_basic.html' %}
+{% block body %}
+<div class="page-header">
+<h1>Как хорошо вы знаете Python?</h1>
+</div>
+<p class="lead">Ответьте честно — мы подберём программу под ваш уровень. Это займёт меньше минуты.</p>
+{% if error %}<div class="alert alert-danger" role="alert">Выберите один из вариантов.</div>{% endif %}
+<form method="post" action="{% url 'onboarding' %}">
+{% csrf_token %}
+<div class="plan-card onboarding-option">
+<label class="onboarding-choice"><input type="radio" name="choice" value="beginner"> Я новичок — начну с нуля</label>
+</div>
+<div class="plan-card onboarding-option">
+<label class="onboarding-choice"><input type="radio" name="choice" value="basics"> Знаю основы: переменные, условия, циклы</label>
+</div>
+<div class="plan-card onboarding-option">
+<label class="onboarding-choice"><input type="radio" name="choice" value="confident"> Уверенно программирую на Python</label>
+</div>
+<p><button type="submit" class="btn btn-primary btn-lg">Продолжить</button></p>
+</form>
+{% endblock %}

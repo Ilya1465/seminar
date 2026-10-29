@@ -1,0 +1,10 @@
+{% extends '_base_basic.html' %}
+{% block body %}
+<div class="empty-state lesson-locked">
+<p class="lesson-locked-icon"><svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="15" r="1.7" fill="currentColor"/></svg></p>
+<h1>Этот урок пока под замком</h1>
+<p>Уроки открываются по порядку: завершите предыдущие, чтобы разблокировать этот.</p>
+{% if not request.user.is_authenticated %}<p>Чтобы прогресс сохранялся, <a href="{% url 'login' %}">войдите</a> или <a href="{% url 'register' %}">зарегистрируйтесь</a>.</p>{% endif %}
+<p><a class="btn btn-primary" href="{{ back_url }}">К предыдущему шагу</a> <a class="btn btn-default" href="{% url 'topics' %}">Все темы</a></p>
+</div>
+{% endblock %}

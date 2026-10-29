@@ -1,0 +1,258 @@
+/* Self-hosted light/dark/system theme. Clean Bootstrap-3 overrides via CSS variables. */
+
+:root {
+	--bg-body: #ffffff;
+	--bg-panel: #f7f7f9;
+	--bg-subtle: #f5f5f5;
+	--bg-code: #f7f7f8;
+	--bg-input: #ffffff;
+	--bg-table: #ffffff;
+	--bg-table-alt: #f9f9f9;
+	--text-strong: #333333;
+	--text-body: #373a3c;
+	--text-muted: #61666b;
+	--text-faint: #7c8288;
+	--border-soft: #dddddd;
+	--border-strong: #bbbbbb;
+	--accent: #4f46e5;
+	--accent-hover: #4338ca;
+	--accent-soft: #eef1fe;
+	/* Текст поверх заливки --accent. В светлой теме акцент тёмный, в тёмной
+	   светлеет до #818cf8 — белым по нему читалось бы всего 3.2:1. */
+	--accent-contrast: #ffffff;
+	/* Второй цвет градиентов (фиолетовый): шапка-«стекло», hero, кнопки. */
+	--accent-2: #7c3aed;
+	/* Полупрозрачная поверхность для липкой шапки с backdrop-blur. */
+	--surface-glass: rgba(255, 255, 255, .82);
+	--danger: #a94442;
+	--success: #2e7d4f;
+	--warning: #8a6d3b;
+	--surface: #ffffff;
+	--surface-hover: #f4f6f8;
+	--surface-sunken: #eef1f4;
+	--focus-ring: rgba(79, 70, 229, .26);
+	--link-underline: rgba(79, 70, 229, .42);
+	--success-bg: #e6f4ec;
+	--danger-bg: #fbeaea;
+	--bg-warning: #fdf4e3;
+	--warning-ink: #7a5f2e;
+	/* Более тёмные варианты акцента, успеха и предупреждения: мелкий
+	   прописный текст (заголовки врезок) требует 4.5:1, а не 3:1. */
+	--accent-ink: #4338ca;
+	--success-ink: #1f6640;
+	--overlay: rgba(16, 24, 40, .5);
+
+	/* Шрифты. Моноширинный один на весь сайт, чтобы листинги кода и
+	   inline-код выглядели одинаково в уроках, задачах и визуализаторе. */
+	--font-sans: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+	--font-mono: "Cascadia Mono", "JetBrains Mono", Consolas, "SF Mono", "Liberation Mono", monospace;
+	--bg-hover: #eceff2;
+
+	/* Единые шкалы. `html { font-size: 10px }`, поэтому 1rem = 10px
+	   и размеры текста в rem записаны в десятых пункта. */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--space-6: 24px;
+	--space-7: 32px;
+	--space-8: 40px;
+	--space-9: 48px;
+	--space-10: 64px;
+
+	--radius-sm: 6px;
+	--radius: 10px;
+	--radius-lg: 14px;
+	--radius-pill: 999px;
+
+	--shadow-xs: 0 1px 2px rgba(16, 24, 40, .05);
+	--shadow-sm: 0 1px 3px rgba(16, 24, 40, .07), 0 1px 2px rgba(16, 24, 40, .04);
+	--shadow-md: 0 6px 18px rgba(16, 24, 40, .09);
+	--shadow-lg: 0 16px 40px rgba(16, 24, 40, .14);
+
+	--fs-xs: 1.3rem;
+	--fs-sm: 1.4rem;
+	--fs-base: 1.6rem;
+	--fs-md: 1.8rem;
+	--fs-lg: 2rem;
+	--fs-xl: 2.4rem;
+	--fs-2xl: 3.2rem;
+	--fs-3xl: 4rem;
+
+	--page-max: 1140px;
+	--page-max-wide: 1320px;
+	--section-gap: var(--space-9);
+
+	/* Поверхность редактора остаётся светлой в обеих темах: цвета токенов
+	   задаёт тема Ace, тёмный фон сделал бы подсветку синтаксиса нечитаемой. */
+	--code-gutter: #f6f7f8;
+	--code-gutter-active: #eef1f4;
+	--code-active-line: #f5f8fb;
+}
+
+html[data-theme="dark"] {
+	color-scheme: dark;
+	--bg-body: #121417;
+	--bg-panel: #1b1f24;
+	--bg-subtle: #232830;
+	--bg-code: #1d2229;
+	--bg-input: #1b1f24;
+	--bg-table: #16191d;
+	--bg-table-alt: #1e232a;
+	--text-strong: #e8eaed;
+	--text-body: #c9ced4;
+	--text-muted: #939ca7;
+	--text-faint: #79828d;
+	--border-soft: #2c343e;
+	--border-strong: #3c4652;
+	--accent: #818cf8;
+	--accent-hover: #a5b4fc;
+	--accent-soft: #26234a;
+	--accent-contrast: #0d1117;
+	--accent-2: #a78bfa;
+	--surface-glass: rgba(27, 31, 36, .78);
+	--danger: #e57a7a;
+	--success: #6cc48f;
+	--warning: #e0b871;
+	--surface: #1e2229;
+	--surface-hover: #262b34;
+	--surface-sunken: #171a1f;
+	--focus-ring: rgba(129, 140, 248, .38);
+	--link-underline: rgba(165, 180, 252, .55);
+	--success-bg: #1c2f24;
+	--danger-bg: #332023;
+	--bg-warning: #2f2718;
+	--warning-ink: #e0b871;
+	--accent-ink: #a5b4fc;
+	--success-ink: #8ad6ac;
+	--overlay: rgba(0, 0, 0, .65);
+	--bg-hover: #2b323c;
+
+	--shadow-xs: 0 1px 2px rgba(0, 0, 0, .4);
+	--shadow-sm: 0 1px 3px rgba(0, 0, 0, .5), 0 1px 2px rgba(0, 0, 0, .3);
+	--shadow-md: 0 6px 18px rgba(0, 0, 0, .5);
+	--shadow-lg: 0 16px 40px rgba(0, 0, 0, .6);
+
+	/* Светлая «бумага» в тёмной теме: чуть приглушена, чтобы не слепить. */
+	--code-gutter: #f1f2f4;
+	--code-gutter-active: #e7eaee;
+	--code-active-line: #f7f8fa;
+}
+
+.theme-toggle {
+	display: inline-flex;
+	align-items: center;
+	border: 0;
+	background: transparent;
+	padding: 4px 8px;
+	margin: 4px 0 0 2px;
+	line-height: 24px;
+	color: rgba(0,0,0,.55);
+	cursor: pointer;
+}
+html[data-theme="dark"] .theme-toggle { color: #aeb6c0; }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.theme-toggle span { display: inline-block; min-width: 24px; text-align: center; }
+.theme-toggle .theme-label { font-size: 12px; margin-left: 6px; }
+@media (max-width: 991px) { .theme-toggle .theme-label { display: none; } }
+
+.navbar-default .navbar-nav > li > .theme-toggle { padding: 7px 8px; margin: 0 4px 0 16px; }
+@media (max-width: 767px) { .navbar-default .navbar-nav > li > .theme-toggle { margin-left: 16px; } }
+
+body { background: var(--bg-body); color: var(--text-body); }
+a { color: var(--accent); }
+a:hover, a:focus { color: var(--accent-hover); }
+/* Ссылки на тонированных поверхностях (сайдбар урока, панели, таблицы)
+   берут --accent-ink: --accent на --accent-soft даёт всего 3.84:1. */
+.sidebar a, .lesson_sections a, .panel a, .well a, .alert-info a, .table a,
+.lesson-summary a, .lesson-keyline a, .lesson-callout a, .callout a { color: var(--accent-ink); }
+.sidebar a:hover, .lesson_sections a:hover, .panel a:hover, .well a:hover, .alert-info a:hover,
+.table a:hover, .lesson-summary a:hover, .lesson-keyline a:hover, .lesson-callout a:hover,
+.callout a:hover { color: var(--accent-hover); }
+
+.navbar { background: var(--bg-panel); }
+.navbar-brand { color: var(--text-strong) !important; }
+.navbar-default .navbar-nav > li > a { color: var(--text-muted); }
+.navbar-default .navbar-nav > li > a:hover { color: var(--text-strong); }
+.navbar-default .navbar-nav > .active > a { background: transparent; color: var(--text-strong); }
+.navbar-default .navbar-nav .original-en { color: #e0484a; }
+.navbar-default .navbar-nav .original-teacher { color: var(--text-strong); }
+.navbar-text .fa-user { color: var(--text-faint); }
+.sidebar { background: var(--bg-subtle); }
+html[data-theme="dark"] .sidebar, html[data-theme="dark"] .sidebar .lesson_sections { background: var(--bg-subtle); }
+.sidebar .nav-sidebar > .active > a { color: var(--accent); background: transparent; }
+
+.btn { border-color: var(--border-soft); }
+.btn-default { background: var(--bg-input); color: var(--text-body); border-color: var(--border-soft); }
+.btn-default:hover, .btn-default:focus { background: var(--bg-panel); color: var(--text-body); border-color: var(--border-strong); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.btn-primary:hover, .btn-primary:focus { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-link { color: var(--accent); }
+.btn-link:hover { color: var(--accent-hover); }
+html[data-theme="dark"] .btn-link { color: #a5b4fc; }
+
+.table, .table-bordered { background: var(--bg-table); color: var(--text-body); }
+.table > thead > tr > th, .table > tbody > tr > td { border-color: var(--border-soft); }
+.table-striped > tbody > tr:nth-of-type(odd) { background: var(--bg-table-alt); }
+.table-hover > tbody > tr:hover { background: var(--bg-subtle); }
+pre { background: var(--bg-code); color: var(--text-body); border-color: var(--border-soft); }
+code { background: var(--bg-code); color: var(--text-body); }
+.text-muted { color: var(--text-muted); }
+
+.form-control {
+	background: var(--bg-input);
+	color: var(--text-body);
+	border-color: var(--border-strong);
+}
+.form-control:focus { background: var(--bg-input); color: var(--text-body); border-color: var(--accent); }
+.auth-form input, .login-form input, .register-row input, .teacher-form input, .teacher-form select,
+.invite-row input, .teacher-filters input, .teacher-filters select {
+	background: var(--bg-input);
+	color: var(--text-body);
+	border-color: var(--border-soft);
+}
+.auth-form .helptext { color: var(--text-muted); }
+.errorlist { color: var(--danger); }
+
+.panel, .panel-default { border-color: var(--border-soft); }
+.panel-default > .panel-heading { background: var(--bg-subtle); color: var(--text-body); border-color: var(--border-soft); }
+.alert { border-color: var(--border-soft); }
+.alert-success { background: var(--bg-subtle); color: var(--text-body); }
+.alert-info { background: var(--accent-soft); color: var(--text-body); }
+.alert-danger { background: var(--bg-subtle); color: var(--danger); }
+
+.dropdown-menu { background: var(--bg-input); border-color: var(--border-soft); }
+.dropdown-menu > li > a { color: var(--text-body); }
+.dropdown-menu > li > a:hover { background: var(--bg-subtle); color: var(--text-strong); }
+.navbar-default .navbar-toggle { border-color: var(--border-soft); }
+.navbar-default .navbar-toggle .icon-bar { background: var(--text-muted); }
+.navbar-default .navbar-collapse, .navbar-default .navbar-form { border-color: var(--border-soft); }
+.well { background: var(--bg-subtle); border-color: var(--border-soft); }
+
+hr { border-color: var(--border-soft); }
+footer { color: var(--text-muted); }
+/* Подвал лежит на --surface-sunken, где --accent даёт всего 4.08:1. */
+footer a { color: var(--accent-ink); }
+footer a:hover, footer a:focus { color: var(--accent-hover); }
+
+.lesson_sections { background: var(--accent-soft); }
+.lesson_sections, .lesson_sections ul { background: var(--accent-soft); }
+.lesson_sections li > a:hover, .lesson_sections li > a:focus { background: rgba(0,0,0,.15); }
+.lesson_sections .problems_link { background: rgba(255,255,255,.06); border-top-color: var(--accent); }
+.lesson_sections .problems_link li a.active { background: var(--accent); color: var(--accent-contrast); }
+#example_tests pre { background: var(--bg-code); color: var(--text-body); border-color: var(--border-soft); }
+.image-preview { background: var(--bg-subtle); border-color: var(--border-soft); }
+.additional-lessons summary { color: var(--accent); }
+.input-hint, .knowledge-origin, .teacher-empty, .teacher-filters { color: var(--text-muted); }
+.teacher-group-card, .enrollment-info { border-color: var(--border-soft); background: var(--bg-input); }
+.beginner-guide { background: var(--accent-soft); border-left-color: var(--accent); color: var(--text-body); }
+
+.visualizer_code_toppanel, .visualizer_code_bottompanel { background: var(--bg-subtle); border-color: var(--border-strong); }
+.visualizer_error { color: var(--danger); background: rgba(200, 60, 60, .12); }
+.visualizer_error_translation { color: var(--text-muted); border-color: var(--text-muted); }
+.ace_editor { border-color: var(--border-strong); }
+
+/* Панель AI-помощника полностью описана в assistant.css: он подключается
+   последним и работает только с токенами темы, поэтому дублировать его
+   правила здесь не нужно. */

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<!--
+
+Online Python Tutor
+https://github.com/pgbovine/OnlinePythonTutor/
+
+Copyright (C) 2010-2012 Philip J. Guo (philip@pgbovine.net)
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+
+<!--
+
+Онлайн учебник Python
+
+Copyright (C) 2012 Vitaly Pavlenko (cxielamiko@gmail.com)
+
+-->
+
+{% load menu %}
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="execution-mode" content="{{ execution_mode }}">
+<meta name="local-page" content="{{ pwa_offline|yesno:'yes,no' }}">
+<meta name="learner-id" content="{{ request.user.pk|default:'local' }}">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#eef1fe">
+<link rel="icon" href="/static/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/static/pwa/icon-192.png">
+<script defer src="/static/pwa/app.js?v=2"></script>
+<script src="/static/pwa/storage.js?v=2"></script>
+<meta name="csrf-token" content="{{ csrf_token }}">
+<meta property="og:title" content="Seminar — интерактивный учебник языка Python">
+<meta property="og:description" content="Теория, задачи, визуализатор и ИИ-помощник прямо в браузере. 60 тем, без установки.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/static/images/poster.png">
+<meta name="twitter:card" content="summary_large_image">
+
+	<title>Seminar — интерактивный учебник языка Python</title>
+
+<script src="{{ STATIC_URL }}js/theme.js"></script>
+
+{% block headers %}
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-3.7.1.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/site.js?v=5"></script>
+    <script defer src="{{ STATIC_URL }}js/interactions.js?v=3"></script>
+    <script src="{{ STATIC_URL }}js/browser-execution.js?v=5"></script>
+    <script>window.MathJax = {options: {enableMenu: false}, loader: {load: []}, tex: {packages: {'[-]': ['autoload', 'require']}}, svg: {fontCache: 'local'}};</script>
+    <script defer src="{{ STATIC_URL }}vendor/mathjax/tex-svg.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/pythontutor.css">
+{% endblock %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/selfhost.css?v=beginner1">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/theme.css?v=5">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/polish.css?v=5">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/ui.css?v=24">
+</head>
+<body>
+	<a class="skip-link" href="#main-content">Перейти к содержимому</a>
+	<div class="navbar navbar-default navbar-{% block navbar_type %}static{% endblock %}-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Открыть меню</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="{% url 'home' %}">Seminar</a>
+			</div>
+			<div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'topics' %}">Темы</a></li>
+                    <li><a href="{% url 'visualizer' %}">Визуализатор</a></li>
+                    {% if request.user.is_authenticated %}<li><a href="{% url 'plan' %}">Моя программа</a></li>{% endif %}
+                    {% if request.user.is_authenticated %}<li><a class="original-tariff" href="{% url 'tariff' %}">Тарифы</a></li>{% endif %}
+                    {% if request.user.is_staff %}<li><a class="original-teacher" href="{% url 'teacher' %}">Учителям</a></li>{% endif %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ещё <span class="caret" aria-hidden="true"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/pwa/">Офлайн-приложение</a></li>
+                            <li><button id="pwa-install-nav" type="button">Установить приложение</button></li>
+                            <li><a class="original-en" href="https://snakify.org/">English version</a></li>
+                        </ul>
+                    </li>
+                    <li><button id="theme-toggle" type="button" class="theme-toggle" aria-live="polite"><span class="theme-icon fa fa-adjust" aria-hidden="true"></span><span class="theme-name"></span></button></li>
+                </ul>
+				<div class="navbar-text navbar-right">
+					{% if request.user.is_authenticated %}<span class="coin-balance" title="Монеты: начисляются за пройденные уроки и сундуки"><svg class="coin-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#f6c453" stroke="#b8860b" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="#ffdf80" stroke="#b8860b" stroke-width="1"/><path d="M12 8.4l1.1 2.3 2.5.4-1.8 1.8.4 2.5-2.2-1.2-2.2 1.2.4-2.5-1.8-1.8 2.5-.4z" fill="#b8860b"/></svg> <span id="coin-count">{{ coin_balance }}</span></span>{% endif %}
+					{% if pwa_offline %}<span>Локальная версия · <a href="/pwa/">Мой прогресс</a></span>{% elif request.user.is_authenticated %}
+						<div class="dropdown user-menu">
+							<button type="button" class="btn btn-link dropdown-toggle" id="user-menu-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fa fa-user" aria-hidden="true"></span><span class="user-name">{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username }}{% endif %}</span><span class="caret" aria-hidden="true"></span></button>
+							<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="user-menu-toggle">
+								<li><a href="{% url 'profile' request.user.username %}">Профиль</a></li>
+							</ul>
+						</div>
+						<form action="{% url 'logout' %}" method="post" class="logout-form">{% csrf_token %}<button type="submit" class="btn btn-link">Выйти</button></form>
+					{% else %}
+						<a href="{% url 'login' %}">Войти</a> или <a href="{% url 'register' %}">зарегистрироваться</a>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% if ai_kind %}<div id="tutor-workspace">{% endif %}
+	<div {% if ai_kind %}id="tutor-content"{% endif %} class="container{% block container_type %}{% endblock %}">
+		<div id="main-content">
+		{% if messages %}<div class="site-messages">{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="status">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% block container %}
+		{% endblock %}
+
+		{% block footer %}
+			<footer>
+                <p class="credits">Разработка и поддержка учебника: <a href="https://t.me/thingsiread">Виталий Павленко</a>, Владимир Соломатин (2014), команда Pythontutor (2016)<br>
+                Автор первоначального текста большинства уроков, задач и тестов: Д. П. Кириенко (см. <a href="https://informatics.msk.ru/moodle/course/view.php?id=156">оригинальный курс</a>)<br>
+                Идея учебника: В. М. Гуровиц<br>
+                Разработчик визуализатора: <a href="https://www.pgbovine.net/">Philip Guo</a> (см. <a href="https://pythontutor.com/">сайт визуализатора</a>)<br>
+                Родилось в 2012</p>
+                <p class="local-links"><a href="{% url 'knowledge_index' %}">База знаний</a> · <a href="{% url 'topics' %}">Темы</a> · <a href="{% url 'visualizer' %}">Визуализатор</a> · <a href="{% url 'image_index' %}">OpenCV</a>{% if request.user.is_authenticated %} · <a href="{% url 'tariff' %}">Тарифы</a>{% endif %}{% if request.user.is_staff %} · <a href="{% url 'statistics' %}">Статистика</a>{% endif %} · <a href="https://github.com/Behnisch/pythontutor-ru">Публичный архив</a></p>
+
+			</footer>
+		{% endblock %}
+		</div>
+	</div>
+{% if ai_kind %}{% include '_assistant.html' %}</div>{% endif %}
+</body>
+</html>

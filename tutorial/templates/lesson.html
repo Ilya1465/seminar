@@ -1,0 +1,116 @@
+{% extends '_lesson_page.html' %}
+{% load lesson %}
+
+{% block headers %}
+	{{ block.super }}
+
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/lesson.css">
+{% endblock %}
+
+{% block navbar_active_lesson %}
+	<ul class="lesson_sections">
+		{% if lesson.sections|length > 2 %}
+			{{ lesson|lesson_navbar }}
+		{% endif %}
+		<li class="problems_link">
+			<a href="#problems">Задачи{% if problems %} <span class="sidebar-count">{{ problems|length }}</span>{% endif %}</a>
+            <ul>{% for menu_problem in problems %}<li><a href="{% url 'problem_in_lesson' lesson.name menu_problem.urlname %}">{{ menu_problem.name }}</a></li>{% endfor %}</ul>
+		</li>
+	</ul>
+{% endblock %}
+
+{% block lesson_body %}
+	<div class="lesson-header">
+		<p class="lesson-eyebrow">Урок {{ lesson_in_course.order }} из {{ lessons|length }}</p>
+		<h1 class="page-header">{% include "_sidebar_toggle.html" %}<span class="lesson-title-text">{% include "_lesson_title.html" %}</span></h1>
+		<p class="lesson-lead">
+			{% block lesson_lead %}
+				Разбираем тему по шагам, а в конце — задачи, которые можно запустить прямо в браузере.
+			{% endblock %}
+		</p>
+		<ul class="lesson-meta">
+			{% if problems %}
+				<li><span class="fa fa-tasks" aria-hidden="true"></span> {{ problems|length }} задач{% if problems|length == 1 %}а{% elif problems|length < 5 %}и{% else %} задач{% endif %} для практики</li>
+			{% endif %}
+			{% if lesson.sections|length > 1 %}
+				<li><span class="fa fa-list-ol" aria-hidden="true"></span> {{ lesson.sections|length }} разделов</li>
+			{% endif %}
+			<li><span class="fa fa-play-circle" aria-hidden="true"></span> Код запускается без установки</li>
+		</ul>
+		<div class="lesson-start">
+			<a class="btn btn-primary" href="{% if cards_mode %}#lesson-player{% else %}#section_{{ lesson.sections.0.1 }}{% endif %}">Начать урок</a>
+			{% if problems and not cards_mode %}
+				<a class="btn btn-default lesson-start-secondary" href="#problems">Сразу к задачам</a>
+			{% endif %}
+		</div>
+	</div>
+
+	{% if cards_mode %}
+		{% include '_lesson_player.html' with problems_url=next_lesson_url %}
+		<p class="lesson-full-link"><a href="?view=full">Читать весь урок целиком</a> · <a href="?view=full#problems">Все задачи урока</a></p>
+	{% else %}
+	{% if lesson.sections|length > 2 %}
+		<nav class="lesson-toc" aria-labelledby="lesson-toc-title">
+			<h2 class="lesson-toc-title" id="lesson-toc-title">В этом уроке</h2>
+			<ol class="lesson-toc-list">
+				{% for title, section_id, subsections in lesson.sections %}
+					<li class="lesson-toc-item">
+						<a class="lesson-toc-link" href="#section_{{ section_id }}">{{ title }}</a>
+						{% if subsections %}
+							<ul class="lesson-toc-sub">
+								{% for sub_title, sub_id, sub_subs in subsections %}
+									<li><a class="lesson-toc-sublink" href="#section_{{ sub_id }}">{{ sub_title }}</a></li>
+								{% endfor %}
+							</ul>
+						{% endif %}
+					</li>
+				{% endfor %}
+				{% if problems %}
+					<li class="lesson-toc-item lesson-toc-item-tasks">
+						<a class="lesson-toc-link" href="#problems">Задачи{% if problems %} <span class="lesson-toc-count">{{ problems|length }}</span>{% endif %}</a>
+					</li>
+				{% endif %}
+			</ol>
+		</nav>
+	{% endif %}
+
+	<article class="lesson-content">
+		{{ lesson|lesson_content }}
+	</article>
+	{% endif %}
+
+	{% if not cards_mode %}
+	<section class="lesson-playground" aria-labelledby="lesson-playground-title">
+		<h2 id="lesson-playground-title">Песочница</h2>
+		<p class="text-muted">Закрепите тему: измените пример из урока или напишите свой код — он выполнится прямо в браузере, ничего сохранять не нужно.</p>
+		<textarea id="lesson-playground-code" rows="7" spellcheck="false" placeholder="# Напишите код сюда"></textarea>
+		<p class="playground-actions"><button type="button" class="btn btn-primary" id="lesson-playground-run">Выполнить</button></p>
+		<pre id="lesson-playground-out" class="playground-out" role="status" aria-live="polite" hidden></pre>
+	</section>
+
+	{% if problems %}
+		<section id="problems" class="lesson-problems" aria-labelledby="lesson-problems-title">
+			<div class="lesson-problems-head">
+				<h2 id="lesson-problems-title" class="lesson-problems-title">Задачи к уроку</h2>
+				<p class="lesson-problems-hint">Решайте по одной: после каждой проверки статус появится в меню слева.</p>
+			</div>
+			<ol class="lesson_problems">
+				{% for problem in problems %}
+					<li class="lesson_problem">
+						<a class="lesson_problem-link" href="{% url 'problem_in_lesson' lesson.name problem.urlname %}">{% problem_link problem %}</a>
+						<div class="lesson_problem-actions">
+							{% ideal_solution problem %}
+						</div>
+					</li>
+				{% endfor %}
+			</ol>
+		</section>
+	{% endif %}
+	{% endif %}
+	{% if lesson_db.external_contest_link %}
+		<p class="lesson-external"><a href="{{ lesson_db.external_contest_link }}">Внешний контест с задачами по этой теме</a></p>
+	{% endif %}
+
+	{% include "_lesson_pager.html" %}
+	{% if cards_mode %}<script src="{{ STATIC_URL }}js/lesson-player.js?v=6"></script>{% endif %}
+{% endblock %}

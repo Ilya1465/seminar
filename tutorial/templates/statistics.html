@@ -1,0 +1,68 @@
+{% extends '_base_basic.html' %}
+
+{% block headers %}
+	{{ block.super }}
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+<h1>Статистика</h1>
+<p class="lead">Сводка по активности учеников и по сданным решениям. Данные считаются
+по всем, кто успешно сдал хотя бы одну задачу.</p>
+</div>
+
+<section class="page-section">
+<h2>Активные пользователи</h2>
+<p class="text-muted">Сколько людей успешно сдало хотя бы одну задачу</p>
+<div class="stat-grid">
+	<div class="stat-card"><span class="stat-value">{{ active_users_in_last_day }}</span><span class="stat-label">За день</span></div>
+	<div class="stat-card"><span class="stat-value">{{ active_users_in_last_week }}</span><span class="stat-label">За неделю</span></div>
+	<div class="stat-card"><span class="stat-value">{{ active_users_in_last_month }}</span><span class="stat-label">За месяц</span></div>
+</div>
+</section>
+
+<section class="page-section">
+<h2>Верные решения</h2>
+<p class="text-muted">Сколько сдано верных решений</p>
+<div class="stat-grid">
+	<div class="stat-card"><span class="stat-value">{{ ok_submissions_in_last_day }}</span><span class="stat-label">За день</span></div>
+	<div class="stat-card"><span class="stat-value">{{ ok_submissions_in_last_week }}</span><span class="stat-label">За неделю</span></div>
+	<div class="stat-card"><span class="stat-value">{{ ok_submissions_in_last_month }}</span><span class="stat-label">За месяц</span></div>
+</div>
+</section>
+
+<section class="page-section">
+<h2>Все отправки</h2>
+<p class="text-muted">Сколько всего отправлено решений, включая неверные</p>
+<div class="stat-grid">
+	<div class="stat-card"><span class="stat-value">{{ submissions_in_last_day }}</span><span class="stat-label">За день</span></div>
+	<div class="stat-card"><span class="stat-value">{{ submissions_in_last_week }}</span><span class="stat-label">За неделю</span></div>
+	<div class="stat-card"><span class="stat-value">{{ submissions_in_last_month }}</span><span class="stat-label">За месяц</span></div>
+</div>
+</section>
+
+<section class="page-section">
+<h2>Новые пользователи</h2>
+<p class="text-muted">Сколько новых пользователей зарегистрировалось</p>
+<div class="stat-grid">
+	<div class="stat-card"><span class="stat-value">{{ new_users_in_last_day }}</span><span class="stat-label">За день</span></div>
+	<div class="stat-card"><span class="stat-value">{{ new_users_in_last_week }}</span><span class="stat-label">За неделю</span></div>
+	<div class="stat-card"><span class="stat-value">{{ new_users_in_last_month }}</span><span class="stat-label">За месяц</span></div>
+</div>
+</section>
+
+{% if request.user.is_superuser %}
+<section class="page-section">
+<h2>Тарифы и подписки</h2>
+<div class="stat-grid">
+	<div class="stat-card"><span class="stat-value">{{ premium_active }}</span><span class="stat-label">Активных Премиум-подписок</span></div>
+	<div class="stat-card"><span class="stat-value">{{ premium_expiring }}</span><span class="stat-label">Истекают за 7 дней</span></div>
+	<div class="stat-card"><span class="stat-value">{{ free_total }}</span><span class="stat-label">Свободных тарифов</span></div>
+	<div class="stat-card"><span class="stat-value">{{ promo_unused }}</span><span class="stat-label">Неиспользованных промокодов</span></div>
+</div>
+<p class="text-muted">Промокодов использовано: {{ promo_used }}. Управление тарифами:
+<a href="{% url 'admin:tutorial_userprofile_changelist' %}">ученики и тарифы</a> ·
+<a href="{% url 'admin:tutorial_promocode_changelist' %}">промокоды</a></p>
+</section>
+{% endif %}
+{% endblock %}

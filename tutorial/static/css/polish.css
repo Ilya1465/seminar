@@ -1,0 +1,639 @@
+/* Оформление и удобство чтения. Слой поверх theme.css: только внешний вид,
+   без изменений разметки и поведения. */
+
+/* ---------- Типографика и читаемость ---------- */
+body {
+	line-height: 1.62;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+/* Комфортная длина строки: длинные абзацы легче читать. */
+.main p,
+.main li,
+.knowledge-article p,
+.knowledge-article li,
+.beginner-guide p,
+.knowledge-list li {
+	max-width: 72ch;
+}
+
+h1, h2, h3, h4 {
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+	color: var(--text-strong);
+}
+
+h1 { font-size: 2.1rem; margin-bottom: 12px; }
+h2 { font-size: 1.6rem; margin-top: 28px; }
+h3 { font-size: 1.28rem; margin-top: 24px; }
+h4 { font-size: 1.08rem; margin-top: 20px; }
+
+.lesson_name, .problem_name, .page-header { letter-spacing: -0.015em; }
+
+/* Ссылки: понятно, что это ссылка, но без подчёркивания в тексте. */
+a { text-decoration: none; transition: color .15s ease; }
+.main p a, .main li a, footer a, .knowledge-article a { border-bottom: 1px solid transparent; }
+.main p a:hover, .main li a:hover, .knowledge-article a:hover {
+	border-bottom-color: currentColor;
+}
+
+/* ---------- Фокус для клавиатуры и скринридеров ---------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+.skip-link {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	background: var(--accent);
+	color: var(--accent-contrast);
+	padding: 10px 16px;
+	z-index: 2000;
+	border-radius: 0 0 6px 0;
+}
+.skip-link:focus { left: 0; }
+
+/* ---------- Шапка ---------- */
+.navbar {
+	border-bottom: 1px solid var(--border-soft);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+}
+html[data-theme="dark"] .navbar { box-shadow: 0 1px 3px rgba(0, 0, 0, .3); }
+
+.navbar-brand { transition: color .15s ease; }
+.navbar-brand:hover { color: var(--accent) !important; }
+
+.navbar-default .navbar-nav > li > a {
+	position: relative;
+	padding-top: 9px;
+	padding-bottom: 9px;
+	border-bottom: 2px solid transparent;
+	transition: color .15s ease, border-color .15s ease;
+}
+.navbar-default .navbar-nav > li > a:hover {
+	border-bottom-color: var(--accent);
+}
+
+/* Меню пользователя: человечек + имя открывают небольшое выпадающее меню. */
+.navbar-text .user-menu { display: inline-block; }
+.navbar-text .user-menu > .dropdown-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	padding: 0 6px 0 0;
+	font-size: inherit;
+	line-height: 24px;
+	color: var(--accent);
+	text-decoration: none;
+	background: none;
+	border: 0;
+	cursor: pointer;
+}
+.navbar-text .user-menu > .dropdown-toggle:hover,
+.navbar-text .user-menu > .dropdown-toggle:focus {
+	color: var(--accent-hover);
+	text-decoration: none;
+}
+.navbar-text .user-menu .user-name {
+	max-width: 15em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.navbar-text .user-menu .caret { margin-left: 1px; border-top-color: currentColor; }
+.navbar-text .user-menu > .dropdown-menu {
+	margin-top: 6px;
+	padding: 4px 0;
+	border-radius: 8px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, .14);
+}
+html[data-theme="dark"] .navbar-text .user-menu > .dropdown-menu { box-shadow: 0 6px 20px rgba(0, 0, 0, .5); }
+.navbar-text .user-menu > .dropdown-menu > li > a { padding: 8px 16px; }
+
+/* «Установить приложение» — это <button>, но в меню он должен выглядеть
+   ровно как соседние ссылки: тот же цвет, отступы, высота и подчёркивание.
+   Значения padding/margin совпадают с .navbar-default .navbar-nav > li > a
+   на обеих ширинах (выверено в браузере), поэтому медиазапрос не нужен. */
+.navbar-default .navbar-nav > li > #pwa-install-nav {
+	margin: 0 0 0 16px;
+	padding: 9px 0;
+	font: inherit;
+	line-height: 24px;
+	color: var(--text-muted);
+	text-align: left;
+	text-decoration: none;
+	vertical-align: baseline;
+	background: none;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	cursor: pointer;
+	transition: color .15s ease, border-color .15s ease;
+}
+.navbar-default .navbar-nav > li > #pwa-install-nav:hover,
+.navbar-default .navbar-nav > li > #pwa-install-nav:focus-visible {
+	color: var(--text-strong);
+	text-decoration: none;
+	border-bottom-color: var(--accent);
+}
+/* Bootstrap скрывает такие кнопки через [hidden]; возвращаем это поведение. */
+.navbar-default .navbar-nav > li > #pwa-install-nav[hidden] { display: none; }
+
+/* ---------- Кнопки ---------- */
+.btn {
+	border-radius: 6px;
+	transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .08s ease;
+	font-weight: 500;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { box-shadow: 0 1px 2px rgba(79, 70, 229, .22); }
+.btn-primary:hover, .btn-primary:focus { box-shadow: 0 4px 12px rgba(79, 70, 229, .32); }
+.btn-default:hover, .btn-default:focus { box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
+
+/* ---------- Формы ---------- */
+.form-control, .auth-form input, .auth-form select, .auth-form textarea,
+.invite-row input, .teacher-filters input, .teacher-filters select {
+	border-radius: 6px;
+	padding: 9px 12px;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+.form-control:focus, .invite-row input:focus, .teacher-filters input:focus, .teacher-filters select:focus {
+	box-shadow: 0 0 0 3px rgba(2, 117, 216, .16);
+}
+
+input[type=checkbox], input[type=radio] { width: auto; }
+
+/* ---------- Карточки ---------- */
+.plan-card, .teacher-group-card, .tariff-home-cta, .profile-tariff,
+.enrollment-info {
+	border-radius: 10px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+	transition: box-shadow .18s ease, transform .18s ease;
+}
+html[data-theme="dark"] .plan-card,
+html[data-theme="dark"] .teacher-group-card,
+html[data-theme="dark"] .tariff-home-cta,
+html[data-theme="dark"] .profile-tariff,
+html[data-theme="dark"] .enrollment-info { box-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
+
+.plan-card:hover, .teacher-group-card:hover {
+	box-shadow: 0 6px 18px rgba(0, 0, 0, .09);
+}
+html[data-theme="dark"] .plan-card:hover,
+html[data-theme="dark"] .teacher-group-card:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, .5); }
+
+.plan-card.plan-current { border-width: 2px; }
+
+.plan-badge {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: var(--accent-soft);
+	color: var(--accent);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+/* ---------- Таблицы ---------- */
+.table > thead > tr > th {
+	background: var(--bg-subtle);
+	color: var(--text-strong);
+	font-weight: 600;
+	border-bottom-width: 2px;
+}
+.table > tbody > tr > td, .table > thead > tr > th { padding: 11px 12px; }
+.table-hover > tbody > tr { transition: background-color .12s ease; }
+
+/* ---------- Блоки кода ---------- */
+pre, code {
+	font-family: "SFMono-Regular", "Consolas", "Liberation Mono", Menlo, monospace;
+}
+pre {
+	border-radius: 8px;
+	padding: 14px 16px;
+	line-height: 1.5;
+	overflow-x: auto;
+}
+
+/* ---------- Главная страница ---------- */
+.home-title {
+	background: linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%);
+	border-bottom: 1px solid var(--border-soft);
+	padding-top: 44px;
+	padding-bottom: 40px;
+}
+html[data-theme="dark"] .home-title {
+	background: linear-gradient(180deg, rgba(90, 162, 232, .12) 0%, transparent 100%);
+}
+.home-title h2 { font-size: 2rem; }
+.home-title h3 { color: var(--text-muted); font-weight: 400; }
+
+.home-overview { margin-top: 40px; }
+.home-features ul { list-style: none; padding-left: 0; }
+.home-features li {
+	position: relative;
+	padding-left: 30px;
+	margin: 14px 0;
+	max-width: none;
+}
+.home-features li::before {
+	content: "\f058";
+	font-family: FontAwesome;
+	position: absolute;
+	left: 0;
+	top: 2px;
+	color: var(--accent);
+	font-size: 15px;
+}
+
+/* Карточки занятий */
+.home-lessons { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.home-lessons > p { margin: 0; }
+.lesson-card {
+	display: block;
+	padding: 14px 16px;
+	border: 1px solid var(--border-soft);
+	border-radius: 10px;
+	background: var(--bg-input);
+	color: var(--text-body);
+	transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+	height: 100%;
+}
+.lesson-card:hover {
+	border-color: var(--accent);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+	transform: translateY(-1px);
+	color: var(--text-body);
+	text-decoration: none;
+}
+.lesson-card .lesson-number {
+	display: block;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	color: var(--text-muted);
+	margin-bottom: 4px;
+}
+.lesson-card .lesson-title { font-weight: 600; color: var(--text-strong); }
+@media (prefers-reduced-motion: reduce) { .lesson-card:hover { transform: none; } }
+
+.additional-lessons { grid-column: 1 / -1; margin-top: 8px; }
+.additional-lessons summary {
+	list-style: none;
+	padding: 12px 16px;
+	border: 1px dashed var(--border-strong);
+	border-radius: 10px;
+	color: var(--accent);
+	cursor: pointer;
+	font-size: 15px;
+}
+.additional-lessons summary::-webkit-details-marker { display: none; }
+.additional-lessons[open] summary {
+	margin-bottom: 12px;
+	border-style: solid;
+	font-weight: 600;
+}
+.additional-lessons[open] {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	gap: 12px;
+}
+.additional-lessons[open] summary { grid-column: 1 / -1; }
+
+.home-start {
+	margin-top: 56px;
+	padding: 28px 30px;
+	border-radius: 12px;
+	background: var(--bg-subtle);
+}
+.home-start h3 { margin-top: 0; }
+.home-start ol { counter-reset: step; list-style: none; padding-left: 0; }
+.home-start li {
+	counter-increment: step;
+	position: relative;
+	padding-left: 44px;
+	margin: 16px 0;
+}
+.home-start li::before {
+	content: counter(step);
+	position: absolute;
+	left: 0;
+	top: -2px;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--accent);
+	color: var(--accent-contrast);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* ---------- Страница тарифа ---------- */
+.plan-price { color: var(--text-strong); font-weight: 600; }
+.plan-card ul { list-style: none; padding-left: 0; }
+.plan-card li { position: relative; padding-left: 26px; margin: 10px 0; max-width: none; }
+.plan-card li::before {
+	content: "\f058";
+	font-family: FontAwesome;
+	position: absolute;
+	left: 0;
+	color: var(--accent);
+	font-size: 13px;
+}
+.plan-card.plan-premium li::before { color: var(--success); }
+
+/* ---------- Уроки: список задач ---------- */
+.lesson_problems > li { margin: 10px 0; }
+#problems > h2 { border-top-width: 72px; margin-top: -72px; }
+
+/* ---------- Разделители и мелочи ---------- */
+hr { border-top: 1px solid var(--border-soft); opacity: 1; }
+.site-messages .alert { border-radius: 8px; border-left-width: 4px; }
+
+footer {
+	border-top: 1px solid var(--border-soft);
+	margin-top: 44px;
+	padding-top: 22px;
+	font-size: 14px;
+	line-height: 1.7;
+}
+
+input[type=submit]:focus-visible, button[type=submit]:focus-visible { outline-offset: 3px; }
+
+/* ---------- Копирование кода ---------- */
+pre.has-copy { position: relative; padding-right: 44px; }
+.copy-code {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	color: var(--text-muted);
+	background: var(--bg-input);
+	border: 1px solid var(--border-soft);
+	border-radius: 6px;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity .15s ease, color .15s ease, border-color .15s ease;
+}
+pre.has-copy:hover > .copy-code,
+.copy-code:focus-visible { opacity: 1; }
+.copy-code:hover { color: var(--accent); border-color: var(--accent); }
+.copy-code.copied { color: var(--success); border-color: var(--success); opacity: 1; }
+.copy-code.copy-failed { color: var(--danger); border-color: var(--danger); opacity: 1; }
+/* На сенсорных экранах наведения нет — показываем кнопку сразу. */
+@media (hover: none) { .copy-code { opacity: .6; } }
+.copy-code-label {
+	position: absolute;
+	top: 8px;
+	right: 40px;
+	font-size: 12px;
+	color: var(--text-muted);
+	pointer-events: none;
+}
+.copy-code.copied ~ .copy-code-label { color: var(--success); }
+.copy-code.copy-failed ~ .copy-code-label { color: var(--danger); }
+
+/* Кнопка копирования всех примеров тестов */
+.copy-tests {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: 10px;
+	padding: 3px 10px;
+	font-size: 13px;
+	color: var(--text-muted);
+	background: var(--bg-input);
+	border: 1px solid var(--border-soft);
+	border-radius: 6px;
+	cursor: pointer;
+	vertical-align: middle;
+	transition: color .15s ease, border-color .15s ease;
+}
+.copy-tests:hover { color: var(--accent); border-color: var(--accent); }
+.copy-tests.copied { color: var(--success); border-color: var(--success); }
+.copy-tests.copy-failed { color: var(--danger); border-color: var(--danger); }
+h3 > .copy-tests { font-size: 13px; font-weight: 400; }
+
+@media (prefers-reduced-motion: reduce) {
+	.read-progress, .copy-code, .back-to-top, .lesson-card { transition: none; }
+}
+
+/* ---------- Прогресс чтения ---------- */
+.read-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 3px;
+	z-index: 1060;
+	background: var(--accent);
+	transform: scaleX(0);
+	transform-origin: 0 50%;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity .2s ease;
+}
+.read-progress.is-visible { opacity: .9; }
+
+/* ---------- Поиск по урокам ---------- */
+.lesson-search {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin: 0 0 14px;
+	max-width: 460px;
+}
+.lesson-search .form-control { width: 100%; }
+.lesson-search-status { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+.lesson-search-empty { color: var(--text-muted); }
+.lesson-card[hidden] { display: none; }
+.additional-lessons[hidden] { display: none; }
+
+/* ---------- Кнопка «наверх» ---------- */
+.back-to-top {
+	position: fixed;
+	left: 20px;
+	bottom: 22px;
+	z-index: 1040;
+	width: 38px;
+	height: 38px;
+	padding: 0;
+	color: var(--text-muted);
+	background: var(--bg-input);
+	border: 1px solid var(--border-soft);
+	border-radius: 50%;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+	transition: color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.back-to-top:hover {
+	color: var(--accent);
+	border-color: var(--accent);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
+}
+html[data-theme="dark"] .back-to-top { box-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
+@media (max-width: 767px) { .back-to-top { left: 12px; bottom: 12px; } }
+
+@media (max-width: 767px) {
+	body { line-height: 1.58; }
+	.home-start { padding: 20px; }
+	.home-lessons { grid-template-columns: 1fr; }
+	h1 { font-size: 1.7rem; }
+}
+
+/* ---------- ������ ������: ������, ������ �� ������ ��� ������ ---------- */
+.knowledge-tools {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin: 0 0 20px;
+}
+.knowledge-tools .form-control { width: 100%; max-width: 340px; }
+.knowledge-option {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	font-size: 14px;
+	color: var(--text-body);
+	font-weight: normal;
+	cursor: pointer;
+}
+.knowledge-option input { margin: 0; }
+.knowledge-filter-status {
+	font-size: 13px;
+	color: var(--text-muted);
+	white-space: nowrap;
+}
+.knowledge-empty { margin: 18px 0 0; }
+
+.knowledge-group { margin: 0 0 24px; }
+.knowledge-group[hidden] { display: none; }
+.knowledge-group-title {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin: 0 0 10px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--border-soft);
+	/* В проекте 1rem = 10px, поэтому размеры задаём явно. */
+	font-size: 1.5rem;
+	color: var(--text-strong);
+}
+.knowledge-group-count {
+	font-size: 13px;
+	font-weight: normal;
+	color: var(--text-muted);
+}
+
+.knowledge-list.knowledge-index {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 2px 24px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.knowledge-list.knowledge-index li {
+	margin: 0;
+	padding: 7px 0;
+	max-width: none;
+	border-bottom: 1px solid transparent;
+	line-height: 1.5;
+}
+.knowledge-list.knowledge-index li[hidden] { display: none; }
+.knowledge-list.knowledge-index li:hover { border-bottom-color: var(--border-soft); }
+
+.knowledge-badge {
+	display: inline-block;
+	padding: 0 6px;
+	border: 1px solid var(--border-soft);
+	border-radius: 3px;
+	font-size: 11px;
+	line-height: 1.6;
+	color: var(--text-muted);
+	white-space: nowrap;
+}
+.knowledge-badge-open { background: var(--accent-soft); border-color: transparent; color: var(--accent-hover); }
+
+@media (max-width: 767px) {
+	.knowledge-tools .form-control { max-width: none; }
+	.knowledge-list.knowledge-index { grid-template-columns: 1fr; }
+}
+
+/* --- Окна написания кода --------------------------------------------------
+   Ace берёт шрифт и высоту строки только из CSS (методов setFontFamily и
+   setLineHeight в сборке нет), поэтому всё оформление живёт здесь.
+
+   Поверхность кода намеренно светлая в обеих темах: цвета токенов задаёт
+   тема самого Ace, и если перекрасить фон в тёмный, текст и подсветка
+   синтаксиса станут нечитаемыми. */
+
+html .ace_editor {
+	/* 1.5 вместо normal: строки перестают слипаться. */
+	line-height: 1.5;
+	font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-variant-ligatures: none;
+	-webkit-font-smoothing: antialiased;
+	border: 1px solid var(--border-strong);
+	border-radius: 4px;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, .04);
+}
+
+html .ace_editor .ace_gutter {
+	background: var(--code-gutter);
+	color: var(--text-faint);
+	border-right: 1px solid var(--border-soft);
+	font-variant-numeric: tabular-nums;
+}
+html .ace_editor .ace_gutter-active-line {
+	background: var(--code-gutter-active);
+	color: var(--text-muted);
+}
+html .ace_editor .ace_active-line { background: var(--code-active-line); }
+html .ace_editor .ace_cursor { color: var(--accent); }
+html .ace_editor .ace_marker-layer .ace_selection { background: var(--accent-soft); }
+html .ace_editor .ace_indent-guides { border-right: 1px dotted var(--border-strong); opacity: .55; }
+html .ace_editor .ace_print-margin { display: none; }
+html .ace_editor .ace_text-input { font-family: inherit; }
+
+/* Фокус виден и без мыши, но не кричит: кольцо в цвет акцента. */
+html .ace_editor.ace_focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Код выше — главный рабочий экран, поэтому он выше ввода и вывода. */
+.visualizer_prog_code { height: 320px; border-radius: 4px; }
+.visualizer_prog_stdin,
+.visualizer_prog_stdout { height: 120px; border-radius: 4px; }
+
+@media (max-width: 767px) {
+	.visualizer_prog_code { height: 240px; }
+	.visualizer_prog_stdin,
+	.visualizer_prog_stdout { height: 96px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html .ace_editor { transition: border-color .15s ease, box-shadow .15s ease; }
+}

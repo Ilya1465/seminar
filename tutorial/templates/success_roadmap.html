@@ -1,0 +1,48 @@
+{% extends '_base_basic.html' %}
+
+{% block headers %}
+    {{ block.super }}
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+<h1>Карта успеха</h1>
+<p class="lead">Какие задачи сдали ученики группы и какими решениями.</p>
+</div>
+
+{% for lesson_key, problems in data %}
+<section class="page-section roadmap-lesson">
+<h2>{{ lesson_key }}</h2>
+
+	{% for problem_key, submissions in problems %}
+		<h3>{{ problem_key }}</h3>
+		<div class="table-responsive">
+		<table class="table table-bordered roadmap-table">
+			<tr>
+				{% for submission_list in submissions %}
+					<td class="roadmap-cell">
+					{% if submission_list %}
+						<strong class="roadmap-student">{{ submission_list.0.user.first_name }} {{ submission_list.0.user.last_name }}</strong>
+						{% for submission in submission_list %}
+						    <pre class="roadmap-code {% if submission.status %}is-ok{% else %}is-bad{% endif %}">{{ submission.code }}</pre>
+						    {% if forloop.last %}<span class="roadmap-time">{{ submission.time }}</span>{% endif %}
+						{% endfor %}
+					{% endif %}
+					</td>
+				{% empty %}
+					<td class="roadmap-cell text-muted">Нет учеников</td>
+				{% endfor %}
+			</tr>
+		</table>
+		</div>
+	{% endfor %}
+</section>
+{% empty %}
+<div class="empty-state">
+<h2>Пока пусто</h2>
+<p>Никто из учеников группы ещё не отправлял решения. Карта заполнится
+после первой попытки.</p>
+</div>
+{% endfor %}
+
+{% endblock %}

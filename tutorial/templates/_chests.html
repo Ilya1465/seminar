@@ -1,0 +1,27 @@
+{% if chests %}
+<div class="chest-banner" id="chest-banner">
+	<svg class="chest-svg" viewBox="0 0 64 52" width="52" height="44" aria-hidden="true"><path d="M6 26 Q6 8 32 8 Q58 8 58 26 L6 26 Z" fill="#a9743c" stroke="#6b4423" stroke-width="2"/><rect x="6" y="26" width="52" height="20" rx="3" fill="#8b5a2b" stroke="#6b4423" stroke-width="2"/><rect x="6" y="24" width="52" height="4" fill="#6b4423"/><rect x="27" y="24" width="10" height="12" rx="2" fill="#f6c453" stroke="#b8860b" stroke-width="1.5"/><circle cx="32" cy="29" r="1.6" fill="#6b4423"/></svg>
+	<div class="chest-text"><strong>У вас {% if chests|length == 1 %}сундук{% elif chests|length < 5 %}сундука{% else %}сундуков{% endif %}: {{ chests|length }}!</strong><br>
+	Награда за пройденные темы. Внутри — монеты.</div>
+	<button type="button" class="btn btn-primary" id="chest-open">Открыть сундук</button>
+</div>
+<script>
+(function () {
+	var btn = document.getElementById('chest-open');
+	if (!btn) return;
+	btn.addEventListener('click', function () {
+		btn.disabled = true;
+		fetch('/coins/chests/open/', {method: 'POST', headers: {'X-CSRFToken': document.querySelector('meta[name=csrf-token]').content}, credentials: 'same-origin'})
+			.then(function (r) { return r.json(); })
+			.then(function (data) {
+				var banner = document.getElementById('chest-banner');
+				banner.classList.add('chest-opened');
+				banner.innerHTML = '<svg class="chest-svg" viewBox="0 0 64 52" width="52" height="44" aria-hidden="true"><path d="M10 24 Q32 4 54 24" fill="none" stroke="#6b4423" stroke-width="7" stroke-linecap="round"/><rect x="6" y="24" width="52" height="22" rx="3" fill="#8b5a2b" stroke="#6b4423" stroke-width="2"/><circle cx="24" cy="22" r="5" fill="#f6c453" stroke="#b8860b" stroke-width="1.5"/><circle cx="33" cy="19" r="5" fill="#ffdf80" stroke="#b8860b" stroke-width="1.5"/><circle cx="42" cy="22" r="5" fill="#f6c453" stroke="#b8860b" stroke-width="1.5"/></svg><div class="chest-text"><strong>В сундуке: +' + data.reward + ' монет!</strong><br>Баланс: ' + data.balance + ' монет.</div>';
+				var count = document.getElementById('coin-count');
+				if (count) count.textContent = data.balance;
+			})
+			.catch(function () { btn.disabled = false; });
+	});
+})();
+</script>
+{% endif %}

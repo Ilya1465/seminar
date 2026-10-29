@@ -1,0 +1,6 @@
+<section id="section_{{ id }}" class="section section-level-{{ nesting_level }}" data-section-id="{{ id }}" aria-labelledby="section-title-{{ id }}">
+	<h{{ nesting_level|add:'+3' }} class="section-title" id="section-title-{{ id }}"><span class="section-number" aria-hidden="true">{{ id }}.</span><span class="section-name">{{ title|safe }}</span></h{{ nesting_level|add:'+3' }}>
+	<div class="section-body">
+		{{ content|safe }}
+	</div>
+</section>

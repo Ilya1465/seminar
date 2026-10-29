@@ -1,0 +1,6 @@
+{% extends '_base_basic.html' %}
+{% block container_type %}-fluid{% endblock %}
+{% block body %}
+{% include '_lesson_player.html' with cards=cards trial=True problems_url='/lessons/inout_and_arithmetic_operations/#problems' %}
+<script src="{{ STATIC_URL }}js/lesson-player.js?v=6"></script>
+{% endblock %}

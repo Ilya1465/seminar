@@ -1,0 +1,57 @@
+{% extends '_base_basic.html' %}
+{% block container_type %}-fluid{% endblock %}
+{% block headers %}
+	{{ block.super }}
+	<script src="{{ STATIC_URL }}vendor/scratchblocks/scratchblocks.min.js"></script>
+	<script src="{{ STATIC_URL }}js/scratch-studio.js?v=17"></script>
+{% endblock %}
+{% block body %}
+<div class="studio-head">
+	<p class="lesson-crumb">{% if crumb_topic %}<a href="{% url 'topics' %}">Темы</a> · <a href="{{ crumb_topic_url }}">{{ crumb_topic }}</a>{% else %}<a href="{% url 'topics' %}">Темы</a> · <a href="{% url 'scratch_index' %}">Мир героя</a>{% endif %}</p>
+	<h1>{% if crumb_topic %}Урок {{ order }} из {{ total }}:{% else %}Уровень {{ order }} из {{ total }}.{% endif %} {{ level.title }}</h1>
+</div>
+<div class="studio">
+	<div class="studio-left">
+		<div class="studio-task">
+			<p><strong>Задание:</strong> {{ level.intro }}</p>
+			{% if lesson_note %}<p class="text-muted">Из теории урока: {{ lesson_note }}</p>{% endif %}
+			<p class="text-muted">Цель — уложиться в {{ level.par }} блоков.</p>
+		</div>
+		<div id="studio-field"></div>
+		<div class="studio-buddy">
+			<img class="buddy-face" id="buddy-face" src="{{ STATIC_URL }}img/robot.svg" alt="Робик">
+			<div class="buddy-bubble" id="buddy-bubble">Привет! Я Робик. Собери программу из блоков справа — и нажми «Играть».</div>
+		</div>
+	</div>
+	<div class="studio-right">
+		<div class="studio-palette">
+			<p class="studio-palette-title">Блоки — перетащи в программу (или нажми):</p>
+			<div id="studio-palette"></div>
+		</div>
+		<div class="studio-script">
+			<div id="studio-flag"></div>
+			<div id="studio-program"></div>
+		</div>
+		<p id="studio-status" role="status"></p>
+		<div class="studio-controls">
+			<button type="button" class="btn btn-primary btn-lg" id="studio-play">▶ Играть</button>
+			<button type="button" class="btn btn-default" id="studio-reset">⟲ Заново</button>
+		</div>
+	</div>
+</div>
+<div id="studio-win" class="studio-win" hidden>
+	<div class="studio-win-card">
+		<p class="studio-win-stars"><img class="win-star" src="{{ STATIC_URL }}img/star.svg" alt=""><img class="win-star" src="{{ STATIC_URL }}img/star.svg" alt=""><img class="win-star" src="{{ STATIC_URL }}img/star.svg" alt="Звезды"></p>
+		<h2>Уровень пройден!</h2>
+		<p id="studio-win-text"></p>
+		<p>
+			{% if next_url %}<a class="btn btn-primary" href="{{ next_url }}">Дальше</a>{% elif next_level %}<a class="btn btn-primary" href="/scratch/{{ next_level.slug }}/">Следующий уровень</a>{% endif %}
+			{% if crumb_topic %}<a class="btn btn-default" href="{{ crumb_topic_url }}">К теме</a>{% else %}<a class="btn btn-default" href="{% url 'scratch_index' %}">Все уровни</a>{% endif %}
+			<button type="button" class="btn btn-default" id="studio-again">Ещё раз</button>
+		</p>
+	</div>
+</div>
+<script>
+window.SCRATCH_LEVEL = {{ level_json|safe }};
+</script>
+{% endblock %}

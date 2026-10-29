@@ -1,0 +1,45 @@
+{% extends '_base_basic.html' %}
+{% block body %}
+<section class="tariff-page">
+    <h1>Тарифы</h1>
+    <p class="tariff-lead">Базовый тариф «Свободный» открывает все уроки, задачи и визуализатор без ограничений по времени. Тариф «Премиум» снимает дневной лимит обращений к ИИ-помощнику и повышает лимиты на отправку решений.</p>
+
+    <div class="plan-cards">
+        <article class="plan-card {% if current == 'free' %}plan-current{% endif %}">
+            <h2>{{ plans.free.title }}</h2>
+            <p class="plan-price">Бесплатно</p>
+            <ul>
+                <li>Все уроки, задачи и визуализатор — без ограничений по времени</li>
+                <li>ИИ-помощник: до {{ plans.free.ai_daily_limit }} вопросов за 24 часа</li>
+                <li>Базовые лимиты на проверку решений</li>
+            </ul>
+            {% if current == 'free' %}<p class="plan-badge">Ваш текущий тариф</p>{% endif %}
+        </article>
+        <article class="plan-card plan-premium {% if current == 'premium' %}plan-current{% endif %}">
+            <h2>{{ plans.premium.title }}</h2>
+            <p class="plan-price">{{ plans.premium.price }} ₽ <small>за 30 дней</small></p>
+            <ul>
+                <li>Всё из «Свободного»</li>
+                <li>ИИ-помощник: до {{ plans.premium.ai_daily_limit }} вопросов за 24 часа</li>
+                <li>Повышенные лимиты на проверку решений и голосовой ввод</li>
+            </ul>
+            {% if current == 'premium' %}<p class="plan-badge">Ваш текущий тариф{% if premium_until %} до {{ premium_until|date:"d.m.Y" }}{% endif %}</p>{% endif %}
+        </article>
+    </div>
+
+    <h2>Как перейти на «Премиум»</h2>
+    {% if current != 'premium' %}
+    <p>{{ provider_note }}</p>
+    <form method="post" class="tariff-code-form">
+        {% csrf_token %}
+        <label for="promo-code">У вас есть промокод?</label>
+        <div class="invite-row">
+            <input class="form-control" id="promo-code" name="code" placeholder="Введите промокод" autocomplete="off" required>
+            <button class="btn btn-primary" type="submit">Активировать</button>
+        </div>
+    </form>
+    {% else %}
+    <p>Премиум активен{% if premium_until %} до {{ premium_until|date:"d.m.Y" }}{% endif %}. Дополнительные возможности уже доступны.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends '_base_basic.html' %}
+
+{% block body %}
+<h1>База знаний</h1>
+<p class="lead">
+  Разбор решений {{ entries|length }} задач.
+  {% if unlocked_count %}
+    Открыто {{ unlocked_count }} — их вы уже решили.
+  {% else %}
+    Откроются те, которые вы решите.
+  {% endif %}
+</p>
+
+{% if entries %}
+<div class="knowledge-tools">
+  <input type="search" id="knowledge-filter" class="form-control"
+         placeholder="Найти разбор по названию" aria-label="Найти разбор по названию" autocomplete="off">
+  <label class="knowledge-option">
+    <input type="checkbox" id="knowledge-only-open"> только разблокированные
+  </label>
+  <span class="knowledge-filter-status" id="knowledge-filter-status" role="status" aria-live="polite"></span>
+</div>
+
+{% for group in groups %}
+<section class="knowledge-group" data-group="{{ group.key }}">
+  <h2 class="knowledge-group-title">{{ group.title }}
+    <span class="knowledge-group-count"></span>
+  </h2>
+  <ul class="knowledge-list knowledge-index">
+    {% for entry in group.entries %}
+    <li class="knowledge-item" data-unlocked="{% if entry.unlocked %}yes{% else %}no{% endif %}">
+      {% if entry.unlocked %}
+        <a href="{{ entry.url }}">{{ entry.title }}</a>
+        <span class="knowledge-badge knowledge-badge-open">разбор открыт</span>
+      {% else %}
+        <a href="{{ entry.task_url }}">{{ entry.title }}</a>
+        <span class="text-muted">— решите задачу, чтобы открыть разбор</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+
+<p class="knowledge-empty text-muted" id="knowledge-empty" hidden>
+  Ничего не нашлось. Попробуйте часть названия или снимите фильтр.
+</p>
+{% else %}
+<p class="text-muted">Разборов пока нет.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,261 @@
+{% section "Строки" %}
+<p>
+Строка считывается со стандартного ввода функцией <code>input()</code>. Для строк определены
+операция сложения (конкатенация) и умножение строки на число. Длина строки — функция
+<code>len</code>.
+</p>
+
+<p>
+Любой объект можно привести к строке функцией <code>str()</code>, а строку — к числу функциями
+<code>int()</code> и <code>float()</code>.
+</p>
+
+{% note %}
+С точки зрения Питона строка — это объект класса <code>str</code>. Имя функции приведения типа
+совпадает с именем класса: <code>str</code> создаёт объект класса <code>str</code>, <code>int</code> —
+объект класса <code>int</code>.
+{% endnote %}
+
+{% program %}
+s = input()
+print(len(s))
+t = input()
+number = int(t)
+u = str(number)
+print(s * 3)
+print(s + ' ' + u)
+    {% inputdata %}
+What is the answer?
+42
+    {% endinputdata %}
+{% endprogram %}
+
+{% tip %}
+<code>print()</code> сам приводит аргументы к строке, поэтому <code>print(number)</code> и
+<code>print(str(number))</code> дают одинаковый результат. Явный <code>str()</code> нужен только
+для конкатенации: <code>str(a) + str(b)</code>.
+{% endtip %}
+{% endsection %}
+
+
+{% section "Символы и индексы" %}
+<p>
+Строка — это последовательность символов, а позиция символа называется его <strong>индексом</strong>.
+Нумерация начинается с нуля:
+</p>
+
+{% table 'Индексы строки Hello' %}
+<tr><th>Индекс</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+<tr><th>Символ</th><td>H</td><td>e</td><td>l</td><td>l</td><td>o</td></tr>
+<tr><th>Индекс с конца</th><td>-5</td><td>-4</td><td>-3</td><td>-2</td><td>-1</td></tr>
+{% endtable %}
+
+<p>
+Отрицательный индекс отсчитывается с конца строки, начиная с <code>-1</code>. Так
+<code>S[-1]</code> — последний символ, а <code>S[-2]</code> — предпоследний.
+</p>
+
+{% warning %}
+Отдельного типа для символа в Питоне нет: результат <code>S[i]</code> — тоже строка типа
+<code>str</code>. Поэтому <code>S[0]</code> нельзя сравнивать с символом как с числом и к нему
+применимы строковые методы.
+{% endwarning %}
+
+<p>
+Если индекс больше либо равен <code>len(S)</code> или меньше, чем <code>-len(S)</code>, произойдёт
+ошибка <code>IndexError: string index out of range</code>.
+</p>
+{% endsection %}
+
+
+{% section "Срезы" %}
+<p>
+<strong>Срез</strong> извлекает из строки фрагмент. Самая простая форма — <code>S[i]</code>: один
+символ с индексом <code>i</code>. Две параметра дают подстроку: <code>S[a:b]</code> возвращает
+символы с индексами от <code>a</code> до <code>b - 1</code>, то есть правый границу в результат
+<strong>не включается</strong>.
+</p>
+
+{% table 'Формы срезов' %}
+<tr><th>Срез</th><th>Что вернёт для <code>'abcdefg'</code></th></tr>
+<tr><td><code>s[1]</code></td><td><code>'b'</code> — один символ</td></tr>
+<tr><td><code>s[-1]</code></td><td><code>'g'</code> — с конца</td></tr>
+<tr><td><code>s[1:3]</code></td><td><code>'bc'</code> — со второго по третий</td></tr>
+<tr><td><code>s[1:-1]</code></td><td><code>'bcdef'</code> — без первого и последнего</td></tr>
+<tr><td><code>s[:3]</code></td><td><code>'abc'</code> — от начала</td></tr>
+<tr><td><code>s[3:]</code></td><td><code>'defg'</code> — до конца</td></tr>
+<tr><td><code>s[:-1]</code></td><td><code>'abcdef'</code> — без последнего</td></tr>
+<tr><td><code>s[:]</code></td><td><code>'abcdefg'</code> — вся строка, копия</td></tr>
+<tr><td><code>s[::2]</code></td><td><code>'aceg'</code> — каждый второй</td></tr>
+<tr><td><code>s[::-1]</code></td><td><code>'gfedcba'</code> — развёрнутая строка</td></tr>
+{% endtable %}
+
+<p>
+Опущенный параметр означает «с начала» или «до конца», но двоеточие при этом обязательно.
+Третий параметр среза задаёт шаг — так же, как третий параметр <code>range</code>:
+<code>S[a:b:d]</code> берёт символы с индексами <code>a</code>, <code>a + d</code>,
+<code>a + 2d</code> и так далее. Отрицательный шаг идёт по строке с конца.
+</p>
+
+{% program %}
+s = 'abcdefg'
+print(s[1])
+print(s[-1])
+print(s[1:3])
+print(s[1:-1])
+print(s[:3])
+print(s[2:])
+print(s[:-1])
+print(s[::2])
+print(s[1::2])
+print(s[::-1])
+{% endprogram %}
+
+{% program %}
+s = 'abcdefghijklm'
+print(s[0:10:2])
+for i in range(0, 10, 2):
+    print(i, s[i])
+{% endprogram %}
+
+{% warning %}
+Развёртывание строки через <code>s[::-1]</code> работает и со списками, и со строками — это самый
+короткий способ развернуть последовательность. Обратный срез создаёт новый объект.
+{% endwarning %}
+
+{% tip %}
+Срез с двумя параметрами никогда не вызывает <code>IndexError</code>: если границы вышли за длину
+строки, просто обрезаются. <code>s[1:5]</code> и <code>s[1:100]</code> для короткой строки дадут
+одно и то же значение. Ошибка возможна только при обращении к одному символу.
+{% endtip %}
+
+{% note %}
+Строки в Питоне <strong>неизменяемы</strong>: любая операция создаёт новую строку и никогда не меняет
+исходную. Строго говоря, в Питоне нет и переменных — есть имена, связанные с объектами. Можно
+связать одно имя с одним объектом, потом переприсвоить его другому, а несколько имён связать с
+одним объектом.
+{% endnote %}
+{% endsection %}
+
+
+{% section "Методы строк" %}
+<p>
+<strong>Метод</strong> — функция, применяемая к объекту. Вызывается как
+<code>объект.метод(аргументы)</code>. У строк их много, но в задачах чаще всего нужны пять.
+</p>
+
+{% table 'Самые нужные методы' %}
+<tr><th>Метод</th><th>Что делает</th><th>Пример для <code>'Hello'</code></th></tr>
+<tr><td><code>find(t)</code></td><td>индекс первого вхождения или <code>-1</code></td><td><code>find('e')</code> → <code>1</code></td></tr>
+<tr><td><code>rfind(t)</code></td><td>индекс последнего вхождения или <code>-1</code></td><td><code>rfind('l')</code> → <code>3</code></td></tr>
+<tr><td><code>count(t)</code></td><td>число непересекающихся вхождений</td><td><code>count('l')</code> → <code>2</code></td></tr>
+<tr><td><code>replace(old, new)</code></td><td>заменяет все вхождения</td><td><code>replace('l','L')</code> → <code>'HeLLo'</code></td></tr>
+<tr><td><code>s[t]</code> + <code>s = s[:-1]</code></td><td>удаление символа — только через новую строку</td><td><code>s[:-1]</code> → <code>'Hell'</code></td></tr>
+{% endtable %}
+{% endsection %}
+
+
+{% section "Поиск подстроки" %}
+<p>
+Метод <code>find</code> возвращает индекс первого вхождения подстроки, а <code>-1</code>, если
+подстрока не найдена:
+</p>
+
+{% program %}
+S = 'Hello'
+print(S.find('e'))    # 1
+print(S.find('ll'))   # 2
+print(S.find('L'))    # -1
+{% endprogram %}
+
+<p>
+Метод <code>rfind</code> ищет с конца и даёт индекс последнего вхождения:
+</p>
+
+{% program %}
+S = 'Hello'
+print(S.find('l'))    # 2
+print(S.rfind('l'))   # 3
+{% endprogram %}
+
+{% warning %}
+Значение <code>-1</code> — не ошибка, а обычный результат. Проверяйте найденное так:
+<code>if S.find('x') &gt;= 0:</code> или <code>if 'x' in S:</code>. Проверка вида
+<code>if S.find('x'):</code> неверна — ненулевой индекс <code>1</code> будет воспринят как
+ложь, а вот <code>-1</code> окажется истиной.
+{% endwarning %}
+
+<p>
+Методы принимают границы поиска: <code>S.find(T, a)</code> ищет начиная с индекса <code>a</code>,
+а <code>S.find(T, a, b)</code> — в срезе <code>S[a:b]</code>. Возвращаемый индекс при этом
+считается от начала всей строки, а не от начала среза.
+</p>
+
+{% tip %}
+Когда <code>find</code> используется только для проверки «есть ли», быстрее и понятнее написать
+<code>if 'x' in S:</code> — так читается намерение, а не способ проверки.
+{% endtip %}
+{% endsection %}
+
+
+{% section "Замена и подсчёт" %}
+<p>
+Метод <code>replace</code> заменяет <strong>все</strong> вхождения одной подстроки на другую и
+возвращает новую строку:
+</p>
+
+{% program %}
+print('Hello'.replace('l', 'L'))
+print('a, b, c'.replace(', ', ', '))
+{% endprogram %}
+
+<p>
+Третий параметр ограничивает количество замен — будут заменены только первые <code>count</code>
+вхождений:
+</p>
+
+{% program %}
+print('Abrakadabra'.replace('a', 'A', 2))
+{% endprogram %}
+
+<p>
+Метод <code>count</code> считает непересекающиеся вхождения:
+</p>
+
+{% program %}
+print('Abracadabra'.count('a'))   # 4
+print(('a' * 10).count('aa'))     # 5, а не 9
+{% endprogram %}
+
+{% note %}
+Про <code>('a' * 10).count('aa')</code>: десять <code>a</code> дают пять непересекающихся пар.
+Пересекающиеся вхождения — <code>aba</code> внутри <code>aaaa</code> — не считаются.
+{% endnote %}
+
+<p>
+Как и <code>find</code>, методы <code>replace</code> и <code>count</code> можно ограничить
+срезом: <code>s.count(t, a, b)</code> и <code>s.replace(old, new, count)</code>.
+</p>
+
+{% keyline %}
+Строки неизменяемы. Чтобы «изменить» строку, нужно создать новую: присвоить результат операции
+обратно в ту же переменную.
+{% endkeyline %}
+
+{% checklist 'Что мы теперь умеем' %}
+<li>Считать длину строки и приводить типы через <code>str</code>, <code>int</code>, <code>float</code></li>
+<li>Обращаться к символу по положительному и отрицательному индексу</li>
+<li>Брать срезы с двумя и тремя параметрами, включая разворот строки</li>
+<li>Искать подстроку через <code>find</code> и <code>rfind</code></li>
+<li>Заменять и считать вхождения подстроки</li>
+{% endchecklist %}
+
+{% remember 'Главное из урока' %}
+<li>Индексы начинаются с 0, отрицательные считаются с конца.</li>
+<li><code>s[a:b]</code> не включает символ с индексом <code>b</code>.</li>
+<li>Пустой параметр означает «с начала» или «до конца», но двоеточие нужно.</li>
+<li>Третий параметр — шаг, как в <code>range</code>: <code>s[::-1]</code> разворачивает строку.</li>
+<li><code>find</code> возвращает <code>-1</code>, если ничего не нашёл — это нужно проверять.</li>
+<li>Строки неизменяемы: любая операция создаёт новую строку.</li>
+{% endremember %}
+{% endsection %}

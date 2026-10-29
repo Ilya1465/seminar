@@ -1,0 +1,33 @@
+{% extends '_base_basic.html' %}
+{% block body %}
+<div class="page-header">
+<h1>Темы курса</h1>
+<p class="lead">Два модуля: сначала программирование для самых маленьких на Scratch, затем настоящий Python. Темы открываются по порядку: завершите одну, чтобы разблокировать следующую.</p>
+</div>
+{% include '_chests.html' %}
+{% for topic_data, unlocked in topic_states %}
+{% ifchanged topic_data.module %}
+{% if not forloop.first %}</div>{% endif %}
+{% if topic_data.module == 1 %}
+<div class="module-header"><span class="module-tag">Модуль 1</span><h2>Программирование на Scratch</h2><p>Цветные блоки-пазлы для самых маленьких: без печатания, без ошибок синтаксиса. <a href="{% url 'scratch_index' %}"><strong>Мир героя: играй и программируй →</strong></a></p></div>
+{% else %}
+<div class="module-header"><span class="module-tag">Модуль 2</span><h2>Python</h2><p>Настоящий код: теория по карточкам, задачи с проверкой в браузере, ИИ-помощник.</p></div>
+{% endif %}
+<div class="topics-grid">
+{% endifchanged %}
+{% if unlocked %}
+<a class="lesson-card topic-card" href="/topics/{{ topic_data.slug }}/">
+<span class="lesson-number">Тема {{ forloop.counter }}</span>
+<span class="lesson-title">{{ topic_data.title }}</span>
+<span class="topic-meta">{{ topic_data.lessons|length }} уроков</span>
+</a>
+{% else %}
+<div class="lesson-card topic-card is-locked" aria-disabled="true" data-href="/topics/{{ topic_data.slug }}/">
+<span class="lesson-number"><svg class="lock-icon" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><rect x="6" y="10" width="12" height="9" rx="2" fill="currentColor"/><path d="M8.5 10V7.7a3.5 3.5 0 0 1 7 0V10" fill="none" stroke="currentColor" stroke-width="2"/></svg> Тема {{ forloop.counter }}</span>
+<span class="lesson-title">{{ topic_data.title }}</span>
+<span class="topic-meta">Сначала завершите предыдущую тему</span>
+</div>
+{% endif %}
+{% endfor %}
+{% if topic_states %}</div>{% endif %}
+{% endblock %}

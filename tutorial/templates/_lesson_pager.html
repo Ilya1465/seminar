@@ -1,0 +1,16 @@
+{% if previous_lesson or next_lesson %}
+<nav class="lesson-pager" aria-label="Переход между уроками">
+	{% if previous_lesson %}
+		<a class="lesson-pager-link lesson-pager-prev" href="{% url 'lesson_in_course' previous_lesson.lesson.urlname %}">
+			<span class="lesson-pager-dir"><span class="fa fa-arrow-left" aria-hidden="true"></span> Предыдущий урок</span>
+			<span class="lesson-pager-title">{{ previous_lesson.order }}. {% include "_lesson_name.html" with urlname=previous_lesson.lesson.urlname title=previous_lesson.lesson.title %}</span>
+		</a>
+	{% else %}<span class="lesson-pager-spacer" aria-hidden="true"></span>{% endif %}
+	{% if next_lesson %}
+		<a class="lesson-pager-link lesson-pager-next" href="{% url 'lesson_in_course' next_lesson.lesson.urlname %}">
+			<span class="lesson-pager-dir">Следующий урок <span class="fa fa-arrow-right" aria-hidden="true"></span></span>
+			<span class="lesson-pager-title">{{ next_lesson.order }}. {% include "_lesson_name.html" with urlname=next_lesson.lesson.urlname title=next_lesson.lesson.title %}</span>
+		</a>
+	{% endif %}
+</nav>
+{% endif %}

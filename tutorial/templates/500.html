@@ -1,0 +1,83 @@
+{% comment %}
+Страница 500. Автономна и не использует {% url %}: если сервер упал,
+обратное преобразование URL может не отработать. Адреса заданы вручную.
+{% endcomment %}<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Сервис временно недоступен — Seminar</title>
+<style>
+	:root {
+		--bg: #f7fafc;
+		--panel: #ffffff;
+		--text: #2f3437;
+		--muted: #6b7378;
+		--border: #dde4ea;
+		--accent: #0275d8;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--bg: #1b1f24;
+			--panel: #22272e;
+			--text: #c9ced4;
+			--muted: #98a2ad;
+			--border: #3a4550;
+			--accent: #4da3e0;
+		}
+	}
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		padding: 32px 16px;
+		background: var(--bg);
+		color: var(--text);
+		font: 16px/1.6 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	}
+	.wrap { max-width: 560px; margin: 0 auto; }
+	.card {
+		background: var(--panel);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 32px;
+	}
+	.code {
+		margin: 0 0 4px;
+		font-size: 13px;
+		letter-spacing: .12em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	h1 { margin: 0 0 12px; font-size: 1.5rem; font-weight: 600; }
+	p { margin: 0 0 20px; color: var(--muted); }
+	.links { display: flex; flex-wrap: wrap; gap: 10px; }
+	.btn {
+		display: inline-block;
+		padding: 8px 16px;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		text-decoration: none;
+		color: var(--text);
+	}
+	.btn:hover { border-color: var(--accent); color: var(--accent); }
+	@media (prefers-reduced-motion: no-preference) {
+		.btn { transition: border-color .15s ease, color .15s ease; }
+	}
+</style>
+</head>
+<body>
+<div class="wrap">
+	<div class="card">
+		<p class="code">Ошибка 500</p>
+		<h1>Сервис временно недоступен</h1>
+		<p>Не удалось выполнить запрос. Попробуйте обновить страницу через минуту —
+			ваш код и прогресс не потеряны.</p>
+		<div class="links">
+			<a class="btn" href="/">На главную</a>
+			<a class="btn" href="/accounts/login/">Войти</a>
+		</div>
+	</div>
+</div>
+</body>
+</html>

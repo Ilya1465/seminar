@@ -1,0 +1,55 @@
+{% extends '_base_basic.html' %}
+
+
+{% block body %}
+<div class="page-header">
+<h1>
+{% if navigation.lesson %}Таблица результатов занятия &laquo;{{ navigation.lesson.title }}&raquo;
+{% elif navigation.course %}Таблица результатов курса &laquo;{{ navigation.course.title }}&raquo;
+{% else %}Таблица результатов{% endif %}
+</h1>
+<p class="lead">Цвет ячейки — статус последней попытки. Щёлкните по значку,
+чтобы открыть посылку во встроенной админке.</p>
+</div>
+
+{% if users %}
+<div class="table-responsive standings-wrap">
+<table class="table table-bordered standings">
+    <thead>
+    <tr>
+        <th scope="col">Пользователь</th>
+        {% for problem in problems %}
+            <th scope="col" class="standings-problem">{{ problem.name }}</th>
+        {% endfor %}
+        <th scope="col" class="standings-num">Решено задач</th>
+        <th scope="col" class="standings-num">Рейтинг</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user, standings_line, num_solved, rating in users %}
+    <tr>
+        <th scope="row" class="standings-user">{{ user.first_name }} {{ user.last_name }}</th>
+        {% for color, rgb_color, text, problem, submission in standings_line %}
+            <td class="standings-cell" title="{{ user.first_name }} {{ user.last_name }}, {{ problem.name }}{% if submission %}, {{ submission.time }}{% endif %}"{% if submission %} style="background-color: {{ rgb_color }};"{% endif %}>
+            {% if submission and request.user.is_staff %}
+                <a href="{% url 'admin:index' %}tutorial/submission/{{ submission.id }}/">{{ text|safe }}</a>
+            {% else %}
+                {{ text|safe }}
+            {% endif %}
+            </td>
+        {% endfor %}
+        <td class="standings-num standings-count">{{ num_solved }}</td>
+        <td class="standings-num standings-count">{{ rating }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+<div class="empty-state">
+<h2>Пока нет результатов</h2>
+<p>Никто ещё не сдал ни одной задачи. Как только появятся посылки,
+здесь появится таблица.</p>
+</div>
+{% endif %}
+{% endblock %}

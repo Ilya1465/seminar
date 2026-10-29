@@ -1,0 +1,76 @@
+.lesson_sections .problems_link {
+	border-top: none;
+	background: transparent;
+}
+
+/* Статусы задач в меню. Раньше здесь были полупрозрачные кислотные
+   заливки (rgba(128,252,92,.3) и подобные) — в тёмной теме они давали
+   размытые пятна и не читались. Теперь это спокойные тона токенов,
+   а текущая задача помечена акцентом и рамкой. */
+.lesson_sections .problems_link li a.active {
+	background: var(--accent);
+	color: var(--accent-contrast);
+	font-weight: 600;
+}
+
+.lesson_sections .problems_link li.solved { background: var(--success-bg); }
+.lesson_sections .problems_link li.accepted { background: var(--accent-soft); }
+.lesson_sections .problems_link li.unsolved { background: var(--danger-bg); }
+
+/* Цветной полосой слева: статус виден и без чтения цвета. */
+.lesson_sections .problems_link li.solved,
+.lesson_sections .problems_link li.accepted,
+.lesson_sections .problems_link li.unsolved { position: relative; }
+.lesson_sections .problems_link li.solved { border-left: 3px solid var(--success); }
+.lesson_sections .problems_link li.accepted { border-left: 3px solid var(--accent); }
+.lesson_sections .problems_link li.unsolved { border-left: 3px solid var(--danger); }
+
+
+.lesson_name {
+	margin-bottom: 10px;
+}
+.problem_name {
+	margin-top: 10px;
+}
+
+
+#example_tests {
+	margin-top: 15px;
+}
+
+#example_tests th {
+	text-align: center;
+}
+
+#example_tests pre {
+	height: 100%;
+	margin: 0;
+	margin-top: 10px;
+}
+
+#example_tests .arrow,
+#example_tests .debug_me {
+	width: 24px;
+	vertical-align: middle;
+	text-align: center;
+}
+#example_tests .debug_me {
+	width: 55px;
+}
+
+#example_tests .debug_me button {
+	padding: 2px;
+	font-size: 20px;
+}
+
+#example_tests .test_result {
+	width: 135px;
+	padding-right: 10px;
+	text-align: center;
+	vertical-align: middle;
+	display: none;
+}
+
+.submit_solution {
+	margin-bottom: 35px;
+}

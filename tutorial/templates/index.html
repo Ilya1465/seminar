@@ -1,0 +1,81 @@
+{% extends '_base_basic.html' %}
+{% block container_type %}-fluid{% endblock %}
+{% block headers %}
+{{ block.super }}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/visualizer.css">
+<script src="{{ STATIC_URL }}js/ace-editor/ace.js"></script>
+<script src="{{ STATIC_URL }}js/editor-setup.js?v=1"></script>
+<script src="{{ STATIC_URL }}js/jquery.jsPlumb-1.6.4-min.js"></script>
+<script src="{{ STATIC_URL }}js/visualizer.js?v=browser2"></script>
+<script src="{{ STATIC_URL }}js/visualizer-page.js"></script>
+{% endblock %}
+{% block body %}
+<header class="home-title">
+<div class="home-hero">
+<h1>Интерактивный учебник языка Питон</h1>
+<p class="lead">Учитесь, решая серьёзные задачи прямо в браузере. Всё, что нужно, — уже открыто в этой вкладке: теория, редактор кода и пошаговая отладка.</p>
+<p class="home-title-actions">
+<a class="btn btn-primary btn-lg" href="{% url 'topics' %}">Выбрать тему</a>
+<a class="btn btn-default btn-lg" href="#home-demo">Посмотреть визуализатор</a>
+<a class="btn btn-default btn-lg" href="{% url 'trial' %}">Пробный урок: новый формат</a>
+{% if request.user.is_authenticated %}<a class="btn btn-default btn-lg" href="{% url 'plan' %}">Моя программа</a>{% endif %}
+</p>
+</div>
+</header>
+<section class="home-try">
+<div class="home-try-playground">
+<h2>Попробуйте прямо сейчас</h2>
+<p class="text-muted">Это настоящий Python — он выполнится прямо в вашем браузере. Измените код и нажмите «Выполнить».</p>
+<textarea id="home-playground-code" rows="5" spellcheck="false"># Ваша первая программа
+name = 'Seminar'
+for i in range(1, 6):
+    print('*' * i, 'Привет,', name)</textarea>
+<p class="home-playground-actions"><button type="button" class="btn btn-primary" id="home-playground-run">Выполнить</button></p>
+<pre id="home-playground-out" aria-live="polite">Здесь появится результат программы…</pre>
+</div>
+</section>
+<script>
+(function(){
+var btn=document.getElementById('home-playground-run');if(!btn)return;
+btn.addEventListener('click',function(){
+ var out=document.getElementById('home-playground-out');
+ if(!window.BrowserPython){out.textContent='Запуск кода недоступен в этом режиме.';return;}
+ btn.disabled=true;out.textContent='Запускаем Python…';
+ window.BrowserPython.run({code:document.getElementById('home-playground-code').value}).then(function(r){
+  var text=(r.stdout||'')+(r.stderr?'\n'+r.stderr:'');
+  out.textContent=text.trim()?text:'(программа ничего не вывела)';
+ }).catch(function(e){out.textContent=e.message;}).finally(function(){btn.disabled=false;});
+});
+})();
+</script>
+<div class="row home-overview">
+<section class="col-sm-12 home-features">
+<h2>Удобный визуализатор</h2>
+<ul>
+<li>Не нужно ничего устанавливать на компьютер: пишите и исполняйте код прямо в браузере</li>
+<li>Отлаживайте код по шагам и смотрите за значениями переменных</li>
+<li>Проверяйте правильность решения на разных входных и выходных данных</li>
+<li>Визуализатор переводит и объясняет ошибки в программах</li>
+<li>После решения задачи ознакомьтесь с образцовым решением от нас</li>
+</ul>
+<div class="home-video">
+<video autoplay muted loop playsinline preload="metadata" aria-label="Демонстрация пошагового выполнения программы"><source src="{{ STATIC_URL }}vendor/original/demo_debug_720p.mp4" type="video/mp4"></video>
+</div>
+</section>
+</div>
+<section class="home-demo" id="home-demo">
+<h2>Визуализатор в действии</h2>
+<div class="row"><div class="col-md-9"><div id="visualizer" data-home-demo="true"></div></div></div>
+{% include '_visualizer_examples.html' %}
+</section>
+<section class="home-start">
+<h2>С чего начать</h2>
+<ol>
+<li>Откройте первое занятие — в нём теория и готовые примеры, которые можно запустить прямо в браузере.</li>
+<li>Выполняйте задачи по порядку: после отправки решения визуализатор показывает, где программа пошла не так.</li>
+<li>Если непонятно — откройте ИИ-помощник на странице задачи и задайте вопрос по своему коду.</li>
+<li>Отслеживайте прогресс: {% if request.user.is_staff %}<a href="/success_roadmap/1/">карта успеха группы</a> и {% endif %}{% if request.user.is_authenticated %}<a href="{% url 'profile' request.user.username %}">ваш профиль</a>{% else %}<a href="{% url 'login' %}">личный кабинет</a>{% endif %} показывают решённые задачи.</li>
+</ol>
+{% if request.user.is_authenticated %}<div class="tariff-home-cta"><strong>Больше возможностей:</strong> тариф «Премиум» снимает дневной лимит ИИ-помощника и повышает лимиты проверки. <a href="{% url 'tariff' %}">Посмотреть тарифы</a></div>{% else %}<div class="tariff-home-cta"><strong>Начните бесплатно:</strong> <a href="{% url 'register' %}">зарегистрируйтесь</a>, чтобы сохранять прогресс и пользоваться ИИ-помощником.</div>{% endif %}
+</section>
+{% endblock %}

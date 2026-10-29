@@ -1,0 +1,60 @@
+<div class="trial-player lesson-player" id="lesson-player" data-problems-url="{{ problems_url|default:'#problems' }}">
+	<div class="trial-top">
+		{% if trial %}<span class="trial-badge">Пробная версия</span>{% endif %}
+		<div class="trial-progress"><div class="trial-progress-fill player-fill"></div></div>
+		<p class="trial-step player-step"></p>
+	</div>
+
+	<div class="trial-cards">
+		{% for card in cards %}
+			{% if card.type == 'theory' %}
+				<section class="trial-card" data-type="theory"{% if not forloop.first %} hidden{% endif %}>
+					<h2>{{ card.title }}</h2>
+					{{ card.html|safe }}
+				</section>
+			{% elif card.type == 'quiz' %}
+				<section class="trial-card" data-type="quiz"{% if not forloop.first %} hidden{% endif %}>
+					<h2>{{ card.title|default:'Проверим понимание' }}</h2>
+					<p class="trial-question">{{ card.question|safe }}</p>
+					<div class="trial-options">
+						{% for option in card.options %}
+							<button type="button" class="trial-option" data-correct="{% if option.correct %}1{% else %}0{% endif %}">{{ option.text|safe }}</button>
+						{% endfor %}
+					</div>
+					<p class="trial-explain" hidden>{{ card.explain|safe }}</p>
+				</section>
+			{% elif card.type == 'code' %}
+				<section class="trial-card" data-type="code" data-tests='{{ card.tests_json }}'{% if card.slug %} data-slug="{{ card.slug }}"{% endif %}{% if card.hint %} data-hint="{{ card.hint }}"{% endif %}{% if not forloop.first %} hidden{% endif %}>
+					<h2>{{ card.title }}</h2>
+					<p>{{ card.task|safe }}</p>
+					<textarea class="trial-code" rows="4" spellcheck="false" placeholder="# Напишите код сюда">{{ card.code }}</textarea>
+					<p class="playground-actions"><button type="button" class="btn btn-primary trial-run">Выполнить</button></p>
+					<pre class="trial-out" role="status" hidden></pre>
+					<p class="trial-hint" hidden></p>
+				</section>
+			{% elif card.type == 'blocks' %}
+				<section class="trial-card" data-type="blocks" data-level='{{ card.level_json }}'{% if not forloop.first %} hidden{% endif %}>
+					<h2>{{ card.title }}</h2>
+					{% if card.intro %}<p>{{ card.intro|safe }}</p>{% endif %}
+					<div class="sb-game"></div>
+				</section>
+			{% elif card.type == 'final' %}
+				<section class="trial-card trial-final" data-type="final"{% if not forloop.first %} hidden{% endif %}>
+					<h2>{{ card.title|default:'Урок пройден!' }}</h2>
+					<p class="trial-stars player-stars" aria-hidden="true"></p>
+					<p class="player-score"></p>
+					{% if card.html %}{{ card.html|safe }}{% endif %}
+					<p class="trial-final-actions">
+						<a class="btn btn-primary" href="{{ problems_url|default:'#problems' }}">Продолжить</a>
+						<button type="button" class="btn btn-default player-again">Пройти ещё раз</button>
+					</p>
+				</section>
+			{% endif %}
+		{% endfor %}
+	</div>
+
+	<div class="trial-nav">
+		<button type="button" class="btn btn-default player-prev">Назад</button>
+		<button type="button" class="btn btn-primary player-next">Далее</button>
+	</div>
+</div>

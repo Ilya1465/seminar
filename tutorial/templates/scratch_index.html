@@ -1,0 +1,27 @@
+{% extends '_base_basic.html' %}
+{% block body %}
+<div class="page-header">
+<h1>Мир героя</h1>
+<p class="lead">Программируй кота настоящими блоками Scratch: собери программу — и смотри, как герой оживает. Уровень за уровнем — от первого шага до праздника звёзд.</p>
+</div>
+<ol class="topic-lessons" id="scratch-levels">
+{% for level in levels %}
+<li>
+<a class="lesson-card topic-lesson-card" href="/scratch/{{ level.slug }}/" data-level="{{ level.slug }}">
+<span class="lesson-number">Уровень {{ forloop.counter }} <span class="level-stars" data-stars="{{ level.slug }}"></span></span>
+<span class="lesson-title">{{ level.title }}</span>
+<span class="topic-meta">{{ level.intro|truncatewords:12 }}</span>
+</a>
+</li>
+{% endfor %}
+</ol>
+<script>
+(function () {
+	var solved = [];
+	try { solved = JSON.parse(localStorage.getItem('scratch-solved') || '[]'); } catch (_) {}
+	document.querySelectorAll('.level-stars').forEach(function (el) {
+		if (solved.indexOf(el.dataset.stars) !== -1) el.innerHTML = '<img class="mini-star" src="{{ STATIC_URL }}img/star.svg" alt=""> пройдено';
+	});
+})();
+</script>
+{% endblock %}
